@@ -11,6 +11,32 @@ on:
         - cron: 0 0 * * 0 # weekly
 
 jobs:
+    build-linux-cmake:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+
+            - name: Install build dependencies
+              uses: ./.github/actions/install-cmake-build-dependencies
+
+            - name: CMake Build
+              run: |
+                  mkdir -p ~cmake_build
+                  cd ~cmake_build
+                  cmake \
+                      -DCMAKE_C_COMPILER=clang-9 \
+                      -DCMAKE_CXX_COMPILER=clang++-9 \
+                      -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+                      -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+                      -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld" \
+                      -DPython3_FIND_VIRTUALENV=FIRST \
+                      ..
+                  cmake --build .
+              shell: bash
     build-linux:
         runs-on: ubuntu-latest
         steps:

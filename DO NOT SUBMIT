@@ -1,0 +1,7 @@
+# Do not submit before addressing the following:
+- build_tools/cmake/ is all copied from iree
+- build_tools/cmake/*_py_*.cmake is copied from *_cc_*.cmake
+- root/CMakeLists.txt is copied from iree
+- Clean up instances of "unconverted_name"
+- Address instances of "TODO(kyleherndon)"
+- Replace instances of filegroup with source_group

@@ -1,0 +1,34 @@
+---
+name: Install CMake build dependencies
+description: Install CMake build dependencies
+runs:
+    using: composite
+    steps:
+        - name: Install dependencies
+          uses: ./.github/actions/install-build-dependencies
+          run: |
+              if [ "$(uname)" = "Darwin" ]; then
+                  echo "CMake build for Darwin is unimplemented."
+                  exit 1
+              else
+                  # Compiler
+                  sudo apt-get install clang++-9 lld-9 tar bzip2 ninja-build
+                  sudo apt-get install tar bzip2 ninja-build
+                  # CMake
+                  wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+                  sudo apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+                  sudo apt update
+                  sudo apt install kitware-archive-keyring
+                  sudo rm /etc/apt/trusted.gpg.d/kitware.gpg
+                  sudo apt update
+                  sudo apt install cmake=3.20\* cmake-data=3.20\*
+                  # programl
+                  sudo apt install apt-transport-https curl gnupg
+                  curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > /tmp/bazel.gpg
+                  sudo mv /tmp/bazel.gpg /etc/apt/trusted.gpg.d/
+                  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+                  sudo apt update && sudo apt install bazel-4.0.0
+                  # protobuf
+                  sudo apt-get install autoconf libtool make
+              fi
+          shell: bash

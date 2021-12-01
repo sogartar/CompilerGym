@@ -4,7 +4,7 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-# cmake_mlir_benchmark_suite()
+# cg_mlir_benchmark_suite()
 #
 # Generates benchmark suites for MLIR input modules. The generated artifacts
 # will be placed in the "<binary-root>/benchmark_suites/<category>" directory,
@@ -58,7 +58,7 @@
 # (e.g., full-inference vs. kernel-execution) and specify more contextual
 # requirements (e.g., big-core vs. little-core).
 #
-function(cmake_mlir_benchmark_suite)
+function(cg_mlir_benchmark_suite)
   if(NOT IREE_BUILD_BENCHMARKS)
     return()
   endif()
@@ -182,13 +182,13 @@ function(cmake_mlir_benchmark_suite)
         add_custom_command(
           OUTPUT "${_VMFB_FILE}"
           COMMAND
-            "$<TARGET_FILE:cmake_tools_iree-translate>"
+            "$<TARGET_FILE:cg_tools_iree-translate>"
               ${_TRANSLATION_ARGS}
               "${_SOURCE_FILE}"
               -o "${_VMFB_FILE}"
           WORKING_DIRECTORY "${_VMFB_ARTIFACTS_DIR}"
           DEPENDS
-            cmake_tools_iree-translate
+            cg_tools_iree-translate
             "${_DOWNLOAD_TARGET_NAME}"
             COMMENT "Generating VMFB for ${_COMMON_NAME_SEGMENTS}"
         )

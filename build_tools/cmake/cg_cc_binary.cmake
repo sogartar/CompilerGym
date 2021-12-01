@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_binary.cmake[
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_binary.cmake[
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -7,7 +7,7 @@
 
 include(CMakeParseArguments)
 
-# cmake_cc_binary()
+# cg_cc_binary()
 #
 # CMake function to imitate Bazel's cc_binary rule.
 #
@@ -23,13 +23,13 @@ include(CMakeParseArguments)
 # HOSTONLY: host only; compile using host toolchain when cross-compiling
 #
 # Note:
-# cmake_cc_binary will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
+# cg_cc_binary will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
 # cmake_base_foo with two alias (readonly) targets, a qualified
 # ${PACKAGE_NS}::${NAME} and an unqualified ${NAME}. Thus NAME must be globally
 # unique in the project.
 #
 # Usage:
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     awesome
 #   HDRS
@@ -39,7 +39,7 @@ include(CMakeParseArguments)
 #   PUBLIC
 # )
 #
-# cmake_cc_binary(
+# cg_cc_binary(
 #   NAME
 #     awesome_tool
 #   SRCS
@@ -47,7 +47,7 @@ include(CMakeParseArguments)
 #   DEPS
 #     iree::awesome
 # )
-function(cmake_cc_binary)
+function(cg_cc_binary)
   cmake_parse_arguments(
     _RULE
     "HOSTONLY;TESTONLY"
@@ -60,8 +60,8 @@ function(cmake_cc_binary)
     return()
   endif()
 
-  cmake_package_ns(_PACKAGE_NS)
-  # Prefix the library with the package name, so we get: cmake_package_name
+  cg_package_ns(_PACKAGE_NS)
+  # Prefix the library with the package name, so we get: cg_package_name
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   add_executable(${_NAME} "")
@@ -74,7 +74,7 @@ function(cmake_cc_binary)
   # example, foo/bar/ library 'bar' would end up as 'foo::bar'. This isn't
   # likely to be common for binaries, but is consistent with the behavior for
   # libraries and in Bazel.
-  cmake_package_dir(_PACKAGE_DIR)
+  cg_package_dir(_PACKAGE_DIR)
   if(${_RULE_NAME} STREQUAL ${_PACKAGE_DIR})
     add_executable(${_PACKAGE_NS} ALIAS ${_NAME})
   endif()
@@ -131,7 +131,7 @@ function(cmake_cc_binary)
       ${_RULE_ABS_DEPS}
   )
 
-  cmake_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   # Add all IREE targets to a folder in the IDE for organization.
   set_target_properties(${_NAME} PROPERTIES

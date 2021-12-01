@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_test.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_test.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -6,9 +6,9 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 include(CMakeParseArguments)
-include(cmake_installed_test)
+include(cg_installed_test)
 
-# cmake_cc_test()
+# cg_cc_test()
 #
 # CMake function to imitate Bazel's cc_test rule.
 #
@@ -24,12 +24,12 @@ include(cmake_installed_test)
 #     automatically.
 #
 # Note:
-# cmake_cc_test will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
-# cmake_base_foo_test.
+# cg_cc_test will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
+# cg_base_foo_test.
 #
 #
 # Usage:
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     awesome
 #   HDRS
@@ -39,7 +39,7 @@ include(cmake_installed_test)
 #   PUBLIC
 # )
 #
-# cmake_cc_test(
+# cg_cc_test(
 #   NAME
 #     awesome_test
 #   SRCS
@@ -48,7 +48,7 @@ include(cmake_installed_test)
 #     gtest_main
 #     iree::awesome
 # )
-function(cmake_cc_test)
+function(cg_cc_test)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
@@ -61,12 +61,12 @@ function(cmake_cc_test)
     ${ARGN}
   )
 
-  cmake_package_ns(_PACKAGE_NS)
-  # Prefix the library with the package name, so we get: cmake_package_name
+  cg_package_ns(_PACKAGE_NS)
+  # Prefix the library with the package name, so we get: cg_package_name
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   add_executable(${_NAME} "")
-  # Alias the cmake_package_name test binary to iree::package::name.
+  # Alias the cg_package_name test binary to iree::package::name.
   # This lets us more clearly map to Bazel and makes it possible to
   # disambiguate the underscores in paths vs. the separators.
   add_executable(${_PACKAGE_NS}::${_RULE_NAME} ALIAS ${_NAME})
@@ -75,7 +75,7 @@ function(cmake_cc_test)
   # For example, foo/bar/ library 'bar' would end up as 'foo::bar'. This isn't
   # likely to be common for tests, but is consistent with the behavior for
   # libraries.
-  cmake_package_dir(_PACKAGE_DIR)
+  cg_package_dir(_PACKAGE_DIR)
   if(${_RULE_NAME} STREQUAL ${_PACKAGE_DIR})
     add_executable(${_PACKAGE_NS} ALIAS ${_NAME})
   endif()
@@ -111,7 +111,7 @@ function(cmake_cc_test)
     PUBLIC
       ${_RULE_DEPS}
   )
-  cmake_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   # Add all IREE targets to a folder in the IDE for organization.
   set_property(TARGET ${_NAME} PROPERTY FOLDER ${IREE_IDE_FOLDER}/test)
@@ -152,7 +152,7 @@ function(cmake_cc_test)
     set_property(TEST ${_TEST_NAME} PROPERTY ENVIRONMENT ${_ENVIRONMENT_VARS})
     set_property(TEST ${_TEST_NAME} PROPERTY LABELS "${_RULE_LABELS}")
   else(ANDROID)
-    cmake_add_installed_test(
+    cg_add_installed_test(
       TEST_NAME "${_TEST_NAME}"
       LABELS "${_RULE_LABELS}"
       COMMAND

@@ -8,7 +8,7 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
 iree_cc_test(
   NAME

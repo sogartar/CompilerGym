@@ -8,8 +8,8 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
-# TODO(kyleherndon): fix all cmake_genrule dependencies in this file
+cg_add_all_subdirs()
+# TODO(kyleherndon): fix all cg_genrule dependencies in this file
 
 set(_DEPS "compiler_gym-llvm-service")
 if(DARWIN)
@@ -17,12 +17,12 @@ if(DARWIN)
   #TODO(boian): figure out what is this target.
   #list(APPEND _DEPS "@llvm//:darwin")
 endif()
-cmake_filegroup(
+cg_filegroup(
   NAME "service"
   DEPENDS ${_DEPS}
 )
 
-cmake_genrule(
+cg_genrule(
   NAME libLLVMPolly
   OUTS "libLLVMPolly.so"
   COMMAND
@@ -31,7 +31,7 @@ cmake_genrule(
     LLVMPolly
 )
 
-cmake_cc_binary(
+cg_cc_binary(
   NAME
     compiler_gym-llvm-service
   SRCS
@@ -41,7 +41,7 @@ cmake_cc_binary(
     compiler_gym::service::runtime::cc_runtime
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     ActionSpace
   HDRS
@@ -62,7 +62,7 @@ cmake_cc_library(
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS core support bitwriter)
-cmake_cc_library(
+cg_cc_library(
   NAME
     Benchmark
   HDRS
@@ -89,7 +89,7 @@ cmake_cc_library(
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS core)
-cmake_cc_library(
+cg_cc_library(
   NAME
     BenchmarkFactory
   HDRS
@@ -117,7 +117,7 @@ cmake_cc_library(
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS core support irreader)
-cmake_cc_binary(
+cg_cc_binary(
   NAME compute_observation
   SRCS ComputeObservation.cc
   COPTS
@@ -143,13 +143,13 @@ set(_FILES "${CMAKE_CURRENT_BINARY_DIR}/compute_observation")
 if(DARWIN)
   message(FATAL_ERROR "TODO(boian): implement")
 endif()
-cmake_filegroup(
+cg_filegroup(
   NAME compute_observation-files
   FILES ${_FILES}
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS core transformutils ipo)
-cmake_cc_library(
+cg_cc_library(
   NAME
     Cost
   HDRS
@@ -181,7 +181,7 @@ llvm_map_components_to_libnames(_LLVM_LIBS
   x86codegen x86asmparser #TODO(boian): can these be found programmatically
   )
 #message(FATAL_ERROR "_LLVM_LIBS=${_LLVM_LIBS}")
-cmake_cc_library(
+cg_cc_library(
   NAME
     LlvmSession
   COPTS
@@ -231,7 +231,7 @@ cmake_cc_library(
 llvm_map_components_to_libnames(_LLVM_LIBS
   core support bitwriter
   )
-cmake_cc_library(
+cg_cc_library(
     NAME Observation
     SRCS Observation.cc
     HDRS Observation.h
@@ -259,7 +259,7 @@ cmake_cc_library(
     ${LLVM_DEFINITIONS}
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     ObservationSpaces
   HDRS

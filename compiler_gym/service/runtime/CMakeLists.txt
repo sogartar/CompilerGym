@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     runtime
   SRCS
@@ -20,7 +20,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     cc_runtime
   HDRS
@@ -30,7 +30,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     benchmark_cache
   SRCS
@@ -40,7 +40,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     BenchmarkCache
   HDRS
@@ -56,7 +56,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     compiler_gym_service
   SRCS
@@ -69,7 +69,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     CompilerGymService
   HDRS
@@ -87,7 +87,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     CompilerGymServiceImpl
   HDRS
@@ -101,7 +101,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     create_and_run_compiler_gym_service
   SRCS
@@ -113,7 +113,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     CreateAndRunCompilerGymServiceImpl
   HDRS

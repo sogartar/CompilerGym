@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     datasets
   SRCS
@@ -28,7 +28,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     uri
   SRCS

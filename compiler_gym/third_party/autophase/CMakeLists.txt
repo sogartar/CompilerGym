@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     autophase
   SRCS
@@ -19,7 +19,7 @@ cmake_py_library(
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS analysis core support)
-cmake_cc_library(
+cg_cc_library(
   NAME
     InstCount
   COPTS
@@ -39,7 +39,7 @@ cmake_cc_library(
 )
 
 llvm_map_components_to_libnames(_LLVM_LIBS analysis core irreader support)
-cmake_cc_binary(
+cg_cc_binary(
   NAME
     compute_autophase
   SRCS
@@ -58,7 +58,7 @@ cmake_cc_binary(
     ${LLVM_DEFINITIONS}
 )
 
-cmake_genrule(
+cg_genrule(
   NAME libLLVMPolly
   OUTS "libLLVMPolly.so"
   COMMAND

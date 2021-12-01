@@ -5,9 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 include(CMakeParseArguments)
-include(cmake_installed_test)
+include(cg_installed_test)
 
-# cmake_lit_test()
+# cg_lit_test()
 #
 # Creates a lit test for the specified source file.
 #
@@ -23,7 +23,7 @@ include(cmake_installed_test)
 #
 # TODO(gcmn): allow using alternative driver
 # A driver other than the default iree/tools/run_lit.sh is not currently supported.
-function(cmake_lit_test)
+function(cg_lit_test)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
@@ -46,7 +46,7 @@ function(cmake_lit_test)
     return()
   endif()
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   get_filename_component(_TEST_FILE_PATH ${_RULE_TEST_FILE} ABSOLUTE)
@@ -57,12 +57,12 @@ function(cmake_lit_test)
     list(APPEND _DATA_DEP_PATHS $<TARGET_FILE:${_DATA_DEP}>)
   endforeach(_DATA_DEP)
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
   set(_NAME_PATH "${_PACKAGE_PATH}/${_RULE_NAME}")
   list(APPEND _RULE_LABELS "${_PACKAGE_PATH}")
 
-  cmake_add_installed_test(
+  cg_add_installed_test(
     TEST_NAME "${_NAME_PATH}"
     LABELS "${_RULE_LABELS}"
     COMMAND
@@ -88,7 +88,7 @@ function(cmake_lit_test)
 endfunction()
 
 
-# cmake_lit_test_suite()
+# cg_lit_test_suite()
 #
 # Creates a suite of lit tests for a list of source files.
 #
@@ -104,13 +104,13 @@ endfunction()
 #
 # TODO(gcmn): allow using alternative driver
 # A driver other than the default iree/tools/run_lit.sh is not currently supported.
-function(cmake_lit_test_suite)
+function(cg_lit_test_suite)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
 
   # Note: we could check IREE_BUILD_COMPILER here, but cross compilation makes
-  # that a little tricky. Instead, we let cmake_check_test handle the checks,
+  # that a little tricky. Instead, we let cg_check_test handle the checks,
   # meaning this function may run some configuration but generate no targets.
 
   cmake_parse_arguments(
@@ -123,7 +123,7 @@ function(cmake_lit_test_suite)
 
   foreach(_TEST_FILE ${_RULE_SRCS})
     get_filename_component(_TEST_BASENAME ${_TEST_FILE} NAME)
-    cmake_lit_test(
+    cg_lit_test(
       NAME
         "${_TEST_BASENAME}.test"
       TEST_FILE

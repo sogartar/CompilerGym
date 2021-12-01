@@ -6,7 +6,7 @@
 
 include(CMakeParseArguments)
 
-# cmake_run_binary_test()
+# cg_run_binary_test()
 #
 # Creates a test that runs the specified binary with the specified arguments.
 #
@@ -24,12 +24,12 @@ include(CMakeParseArguments)
 #
 #
 # Usage:
-# cmake_cc_binary(
+# cg_cc_binary(
 #   NAME
 #     requires_args_to_run
 #   ...
 # )
-# cmake_run_binary_test(
+# cg_run_binary_test(
 #   NAME
 #     requires_args_to_run_test
 #   ARGS
@@ -38,7 +38,7 @@ include(CMakeParseArguments)
 #     ::requires_args_to_run
 # )
 
-function(cmake_run_binary_test)
+function(cg_run_binary_test)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
@@ -51,10 +51,10 @@ function(cmake_run_binary_test)
     ${ARGN}
   )
 
-  # Prefix the test with the package name, so we get: cmake_package_name
+  # Prefix the test with the package name, so we get: cg_package_name
   rename_bazel_targets(_NAME "${_RULE_NAME}")
-  cmake_package_ns(_PACKAGE_NS)
-  cmake_package_path(_PACKAGE_PATH)
+  cg_package_ns(_PACKAGE_NS)
+  cg_package_path(_PACKAGE_PATH)
   set(_TEST_NAME "${_PACKAGE_PATH}/${_RULE_NAME}")
 
   # Replace binary passed by relative ::name with iree::package::name
@@ -94,7 +94,7 @@ function(cmake_run_binary_test)
         ${_RULE_ARGS}
     )
     set_property(TEST ${_TEST_NAME} PROPERTY ENVIRONMENT "TEST_TMPDIR=${CMAKE_BINARY_DIR}/${_NAME}_test_tmpdir")
-    cmake_add_test_environment_properties(${_TEST_NAME})
+    cg_add_test_environment_properties(${_TEST_NAME})
   endif()
 
   list(APPEND _RULE_LABELS "${_PACKAGE_PATH}")

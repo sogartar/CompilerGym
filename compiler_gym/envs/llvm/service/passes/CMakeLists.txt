@@ -8,13 +8,13 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
 string(CONCAT _CMD
   "\"${Python3_EXECUTABLE}\" "
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__extract_passes_from_llvm_source_tree,LOCATION>\""
   " \"${LLVM_SRC_DIR}/llvm\" > $@")
-cmake_genrule(
+cg_genrule(
   NAME passes_list
   OUTS "passes_list.csv"
   COMMAND ${_CMD}
@@ -26,7 +26,7 @@ string(CONCAT _CMD
   "\"${Python3_EXECUTABLE}\" "
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__filter_action_space,LOCATION>\" < "
   " \"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__passes_list,LOCATION>\" > $@")
-cmake_genrule(
+cg_genrule(
   NAME actions_csv
   OUTS "actions.csv"
   COMMAND ${_CMD}
@@ -35,7 +35,7 @@ cmake_genrule(
     ::filter_action_space
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     common
   SRCS
@@ -43,7 +43,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     config
   SRCS
@@ -53,7 +53,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     extract_passes_from_llvm_source_tree
   SRCS
@@ -63,7 +63,7 @@ cmake_py_binary(
     ::config
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     make_action_space_genfiles
   SRCS
@@ -73,7 +73,7 @@ cmake_py_binary(
     ::config
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     filter_action_space
   SRCS
@@ -88,7 +88,7 @@ string(CONCAT _CMD
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__make_action_space_genfiles,LOCATION>\""
   " $(@D) < \"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__actions_csv,LOCATION>\""
 )
-cmake_genrule(
+cg_genrule(
   NAME actions_genfiles
   OUTS
     "ActionEnum.h"

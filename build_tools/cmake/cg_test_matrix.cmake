@@ -11,13 +11,13 @@ include(CMakeParseArguments)
 # The resulting test files will be written to:
 #   ${CMAKE_CURRENT_BINARY_DIR}/generated
 # Typically this should be followed by:
-#   cmake_test_matrix_glob_py_tests
+#   cg_test_matrix_glob_py_tests
 #
 # (type of tests to add are based on the runners defined in the
 # generation script)
 # TODO: Add a `generate` step conditioned on the test_matrix.yaml file, so that
 # reconfigure is automatic.
-function(cmake_test_matrix_gen)
+function(cg_test_matrix_gen)
   set(_test_matrix_yaml "${CMAKE_CURRENT_SOURCE_DIR}/test_matrix.yaml")
   set(_generator_script "${PROJECT_SOURCE_DIR}/build_tools/testing/gen_test_matrix.py")
   message(STATUS "Generating tests for ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -35,12 +35,12 @@ function(cmake_test_matrix_gen)
 endfunction()
 
 # Adds individual py_tests for each generated *.py file from an
-# cmake_test_matrix_gen invocation.
+# cg_test_matrix_gen invocation.
 #
 # Parameters:
 #   GLOB: The glob expression to use (defaults to *.py)
 #   LABELS: Optional labels to add
-function(cmake_test_matrix_glob_py_tests)
+function(cg_test_matrix_glob_py_tests)
   cmake_parse_arguments(ARG
     ""
     "GLOB"
@@ -63,7 +63,7 @@ function(cmake_test_matrix_glob_py_tests)
   endif()
 
   foreach(test_file ${_found_test_files})
-    cmake_py_test(
+    cg_py_test(
       NAME "generated/${test_file}"
       GENERATED_IN_BINARY_DIR
       SRCS "generated/${test_file}"

@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     llvm
   SRCS
@@ -25,14 +25,14 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME compute_observation
   SRCS compute_observation.py
   DATA compiler_gym::envs::llvm::service::compute_observation-files
   DEPS compiler_gym::util::util
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     llvm_benchmark
   SRCS
@@ -45,7 +45,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     llvm_env
   SRCS
@@ -64,7 +64,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     llvm_rewards
   SRCS
@@ -94,7 +94,7 @@ set_command_pythonpath(COMMAND "${_CMD}" RESULT_VAR _CMD)
 ##  " && mv \"${CMAKE_CURRENT_BINARY_DIR}/llvm_env/__init__.py.bak\" \"${CMAKE_CURRENT_BINARY_DIR}/llvm_env/__init__.py\""
 #)
 
-cmake_genrule(
+cg_genrule(
   NAME specs
   OUTS "specs.py"
   COMMAND "${_CMD}"
@@ -105,7 +105,7 @@ cmake_genrule(
     compiler_gym::envs::llvm::service::compiler_gym-llvm-service
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     make_specs
   SRCS

@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     spaces
   SRCS
@@ -28,12 +28,12 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME box
   SRCS box.py
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     commandline
   SRCS
@@ -43,17 +43,17 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME dict
   SRCS dict.py
 )
 
-cmake_py_library(
+cg_py_library(
   NAME discrete
   SRCS discrete.py
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     named_discrete
   SRCS
@@ -63,7 +63,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     reward
   SRCS
@@ -75,7 +75,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     scalar
   SRCS
@@ -83,7 +83,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     sequence
   SRCS
@@ -93,7 +93,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME tuple
   SRCS "tuple.py"
 )

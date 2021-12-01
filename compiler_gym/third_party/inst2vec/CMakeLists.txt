@@ -8,23 +8,23 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_genrule(
+cg_genrule(
   NAME dictionary
   OUTS "dictionary.pickle"
   SRCS "dictionary.tar.bz2"
   COMMAND "tar xjf ${CMAKE_CURRENT_SOURCE_DIR}/dictionary.tar.bz2 -C $(@D)"
 )
 
-cmake_genrule(
+cg_genrule(
   NAME embeddings
   OUTS "embeddings.pickle"
   SRCS "embeddings.tar.bz2"
   COMMAND "tar xjf ${CMAKE_CURRENT_SOURCE_DIR}/embeddings.tar.bz2 -C $(@D)"
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     inst2vec
   SRCS
@@ -38,7 +38,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     inst2vec_preprocess
   SRCS
@@ -48,7 +48,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     rgx_utils
   SRCS

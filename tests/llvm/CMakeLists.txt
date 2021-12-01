@@ -8,7 +8,7 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
 iree_py_test(
   NAME
@@ -44,7 +44,7 @@ iree_py_test(
     tests::test_main
 )
 
-cmake_filegroup(
+cg_filegroup(
   NAME custom_benchmarks_test_files
   FILES "${CMAKE_CURRENT_LIST_DIR}/invalid_ir.ll")
 iree_py_test(
@@ -157,7 +157,7 @@ iree_py_test(
     tests::test_main
 )
 
-cmake_filegroup(
+cg_filegroup(
   NAME invalid_ir_test_files
   FILES "${CMAKE_CURRENT_LIST_DIR}/invalid_ir.ll")
 iree_py_test(

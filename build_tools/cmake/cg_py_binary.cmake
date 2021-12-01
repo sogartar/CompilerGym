@@ -1,13 +1,13 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_binary.cmake[
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_binary.cmake[
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-include(cmake_py_library)
+include(cg_py_library)
 
-# cmake_cc_binary()
+# cg_cc_binary()
 #
 # CMake function to imitate Bazel's py_binary rule.
 #
@@ -22,13 +22,13 @@ include(cmake_py_library)
 # TESTONLY: When added, this target will only be built if user passes -DIREE_BUILD_TESTS=ON to CMake.
 #
 # Note:
-# cmake_py_binary will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
-# cmake_base_foo with two alias (readonly) targets, a qualified
+# cg_py_binary will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
+# cg_base_foo with two alias (readonly) targets, a qualified
 # ${PACKAGE_NS}::${NAME} and an unqualified ${NAME}. Thus NAME must be globally
 # unique in the project.
 #
-function(cmake_py_binary)
+function(cg_py_binary)
   # Currently the same as adding a library.
   # When install rules are added they will need to split.
-  cmake_py_library(${ARGV})
+  cg_py_library(${ARGV})
 endfunction()

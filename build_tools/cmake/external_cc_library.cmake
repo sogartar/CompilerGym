@@ -61,7 +61,7 @@ include(CMakeParseArguments)
 #   PUBLIC
 # )
 #
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     main_lib
 #   ...
@@ -135,7 +135,7 @@ function(external_cc_library)
       PUBLIC
         ${_RULE_DEFINES}
     )
-    cmake_add_data_dependencies(NAME ${_NAME} DATA ${_RULE_DATA})
+    cg_add_data_dependencies(NAME ${_NAME} DATA ${_RULE_DATA})
 
     # Add all external targets to a a folder in the IDE for organization.
     if(_RULE_PUBLIC)
@@ -172,7 +172,7 @@ function(external_cc_library)
       INTERFACE
         ${_RULE_DEPS}
     )
-    cmake_add_data_dependencies(NAME ${_NAME} DATA ${_RULE_DATA})
+    cg_add_data_dependencies(NAME ${_NAME} DATA ${_RULE_DATA})
     target_compile_definitions(${_NAME}
       INTERFACE
         ${_RULE_DEFINES}

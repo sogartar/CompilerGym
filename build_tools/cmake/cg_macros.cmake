@@ -24,10 +24,10 @@ endif()
 # General utilities
 #-------------------------------------------------------------------------------
 
-# cmake_to_bool
+# cg_to_bool
 #
 # Sets `variable` to `ON` if `value` is true and `OFF` otherwise.
-function(cmake_to_bool VARIABLE VALUE)
+function(cg_to_bool VARIABLE VALUE)
   if(VALUE)
     set(${VARIABLE} "ON" PARENT_SCOPE)
   else()
@@ -35,11 +35,11 @@ function(cmake_to_bool VARIABLE VALUE)
   endif()
 endfunction()
 
-# cmake_append_list_to_string
+# cg_append_list_to_string
 #
 # Joins ${ARGN} together as a string separated by " " and appends it to
 # ${VARIABLE}.
-function(cmake_append_list_to_string VARIABLE)
+function(cg_append_list_to_string VARIABLE)
   if(NOT "${ARGN}" STREQUAL "")
     string(JOIN " " _ARGN_STR ${ARGN})
     set(${VARIABLE} "${${VARIABLE}} ${_ARGN_STR}" PARENT_SCOPE)
@@ -56,7 +56,7 @@ endfunction()
 #
 # Example when called from iree/base/CMakeLists.txt:
 #   iree::base
-function(cmake_package_ns PACKAGE_NS)
+function(cg_package_ns PACKAGE_NS)
   string(REPLACE ${IREE_ROOT_DIR} "" _PACKAGE ${CMAKE_CURRENT_LIST_DIR})
   string(SUBSTRING ${_PACKAGE} 1 -1 _PACKAGE)
   string(REPLACE "/" "::" _PACKAGE_NS ${_PACKAGE})
@@ -66,9 +66,9 @@ endfunction()
 # Sets ${PACKAGE_NAME} to the IREE-root relative package name.
 #
 # Example when called from iree/base/CMakeLists.txt:
-#   cmake_base
-function(cmake_package_name PACKAGE_NAME)
-  cmake_package_ns(_PACKAGE_NS)
+#   cg_base
+function(cg_package_name PACKAGE_NAME)
+  cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "__" _PACKAGE_NAME ${_PACKAGE_NS})
   set(${PACKAGE_NAME} ${_PACKAGE_NAME} PARENT_SCOPE)
 endfunction()
@@ -77,8 +77,8 @@ endfunction()
 #
 # Example when called from iree/base/CMakeLists.txt:
 #   iree/base
-function(cmake_package_path PACKAGE_PATH)
-  cmake_package_ns(_PACKAGE_NS)
+function(cg_package_path PACKAGE_PATH)
+  cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
   set(${PACKAGE_PATH} ${_PACKAGE_PATH} PARENT_SCOPE)
 endfunction()
@@ -87,15 +87,15 @@ endfunction()
 #
 # Example when called from iree/base/CMakeLists.txt:
 #   base
-function(cmake_package_dir PACKAGE_DIR)
-  cmake_package_ns(_PACKAGE_NS)
+function(cg_package_dir PACKAGE_DIR)
+  cg_package_ns(_PACKAGE_NS)
   string(FIND ${_PACKAGE_NS} "::" _END_OFFSET REVERSE)
   math(EXPR _END_OFFSET "${_END_OFFSET} + 2")
   string(SUBSTRING ${_PACKAGE_NS} ${_END_OFFSET} -1 _PACKAGE_DIR)
   set(${PACKAGE_DIR} ${_PACKAGE_DIR} PARENT_SCOPE)
 endfunction()
 
-# cmake_get_executable_path
+# cg_get_executable_path
 #
 # Gets the path to an executable in a cross-compilation-aware way. This
 # should be used when accessing binaries that are used as part of the build,
@@ -107,7 +107,7 @@ endfunction()
 #     name of the executable target when not cross compiling and the basename of
 #     the binary when importing a binary from a host build. Thus this should be
 #     the global unqualified name of the binary, not the fully-specified name.
-function(cmake_get_executable_path OUTPUT_PATH_VAR EXECUTABLE)
+function(cg_get_executable_path OUTPUT_PATH_VAR EXECUTABLE)
   if (NOT DEFINED IREE_HOST_BINARY_ROOT OR TARGET "${EXECUTABLE}")
     # We can either expect the target to be defined as part of this CMake
     # invocation (if not cross compiling) or the target is defined already.
@@ -130,7 +130,7 @@ endfunction()
 
 function(canonize_bazel_target_names _RESULT _BAZEL_TARGETS)
   unset(_RES)
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   foreach(_TARGET ${_BAZEL_TARGETS})
     if (NOT _TARGET MATCHES ":")
       # local target
@@ -189,7 +189,7 @@ endfunction()
 # Appends ${OPTS} with a list of values based on the current compiler.
 #
 # Example:
-#   cmake_select_compiler_opts(COPTS
+#   cg_select_compiler_opts(COPTS
 #     CLANG
 #       "-Wno-foo"
 #       "-Wno-bar"
@@ -203,7 +203,7 @@ endfunction()
 #
 # Note that variables are allowed, making it possible to share options between
 # different compiler targets.
-function(cmake_select_compiler_opts OPTS)
+function(cg_select_compiler_opts OPTS)
   cmake_parse_arguments(
     PARSE_ARGV 1
     _IREE_SELECTS
@@ -246,7 +246,7 @@ endfunction()
 # NAME: name of the target to add data dependencies to
 # DATA: List of targets and/or files in the source tree. Files should use the
 #       same format as targets (i.e. iree::package::subpackage::file.txt)
-function(cmake_add_data_dependencies)
+function(cg_add_data_dependencies)
   cmake_parse_arguments(
     _RULE
     ""
@@ -281,7 +281,7 @@ endfunction()
 # Tool symlinks
 #-------------------------------------------------------------------------------
 
-# cmake_symlink_tool
+# cg_symlink_tool
 #
 # Adds a command to TARGET which symlinks a tool from elsewhere
 # (FROM_TOOL_TARGET_NAME) to a local file name (TO_EXE_NAME) in the current
@@ -289,11 +289,11 @@ endfunction()
 #
 # Parameters:
 #   TARGET: Local target to which to add the symlink command (i.e. an
-#     cmake_py_library, etc).
+#     cg_py_library, etc).
 #   FROM_TOOL_TARGET: Target of the tool executable that is the source of the
 #     link.
 #   TO_EXE_NAME: The executable name to output in the current binary dir.
-function(cmake_symlink_tool)
+function(cg_symlink_tool)
   cmake_parse_arguments(
     ARG
     ""
@@ -303,8 +303,8 @@ function(cmake_symlink_tool)
   )
 
   # Transform TARGET
-  cmake_package_ns(_PACKAGE_NS)
-  cmake_package_name(_PACKAGE_NAME)
+  cg_package_ns(_PACKAGE_NS)
+  cg_package_name(_PACKAGE_NAME)
   set(_TARGET "${_PACKAGE_NAME}_${ARG_TARGET}")
   set(_FROM_TOOL_TARGET ${ARG_FROM_TOOL_TARGET})
   set(_TO_TOOL_PATH "${CMAKE_CURRENT_BINARY_DIR}/${ARG_TO_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
@@ -330,13 +330,13 @@ endfunction()
 # Tests
 #-------------------------------------------------------------------------------
 
-# cmake_add_test_environment_properties
+# cg_add_test_environment_properties
 #
 # Adds test environment variable properties based on the current build options.
 #
 # Parameters:
 # TEST_NAME: the test name, e.g. iree/base:math_test
-function(cmake_add_test_environment_properties TEST_NAME)
+function(cg_add_test_environment_properties TEST_NAME)
   # IREE_*_DISABLE environment variables may used to skip test cases which
   # require both a compiler target backend and compatible runtime HAL driver.
   #

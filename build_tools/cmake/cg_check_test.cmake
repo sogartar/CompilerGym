@@ -6,7 +6,7 @@
 
 include(CMakeParseArguments)
 
-# cmake_check_test()
+# cg_check_test()
 #
 # Creates a test using iree-check-module for the specified source file.
 #
@@ -23,12 +23,12 @@ include(CMakeParseArguments)
 #       and input file are passed automatically.
 #   LABELS: Additional labels to apply to the test. The package path and
 #       "driver=${DRIVER}" are added automatically.
-function(cmake_check_test)
+function(cg_check_test)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
 
-  # Check tests require (by way of cmake_bytecode_module) some tools.
+  # Check tests require (by way of cg_bytecode_module) some tools.
   #
   # On the host, we can either build the tools directly, if IREE_BUILD_COMPILER
   # is enabled, or reuse the tools from an existing build (or binary release).
@@ -72,7 +72,7 @@ function(cmake_check_test)
     # should pretty consistently be just a number we can use for target triple.
     set(_TARGET_TRIPLE "aarch64-none-linux-android${ANDROID_PLATFORM_LEVEL}")
 
-    cmake_bytecode_module(
+    cg_bytecode_module(
       NAME
         "${_MODULE_NAME}"
       SRC
@@ -86,7 +86,7 @@ function(cmake_check_test)
       TESTONLY
     )
   else(ANDROID)
-    cmake_bytecode_module(
+    cg_bytecode_module(
       NAME
         "${_MODULE_NAME}"
       SRC
@@ -101,13 +101,13 @@ function(cmake_check_test)
   endif(ANDROID)
 
   # TODO(b/146898896): It would be nice if this were something we could query
-  # rather than having to know the conventions used by cmake_bytecode_module.
+  # rather than having to know the conventions used by cg_bytecode_module.
   set(_MODULE_FILE_NAME "${_MODULE_NAME}.vmfb")
 
-  # cmake_bytecode_module does not define a target, only a custom command.
+  # cg_bytecode_module does not define a target, only a custom command.
   # We need to create a target that depends on the command to ensure the
   # module gets built.
-  # TODO(b/146898896): Do this in cmake_bytecode_module and avoid having to
+  # TODO(b/146898896): Do this in cg_bytecode_module and avoid having to
   # reach into the internals.
   set(_MODULE_TARGET_NAME "${_NAME}_module")
   add_custom_target(
@@ -117,15 +117,15 @@ function(cmake_check_test)
   )
 
   # A target specifically for the test. We could combine this with the above,
-  # but we want that one to get pulled into cmake_bytecode_module.
+  # but we want that one to get pulled into cg_bytecode_module.
   add_custom_target("${_NAME}" ALL)
   add_dependencies(
     "${_NAME}"
     "${_MODULE_TARGET_NAME}"
-    cmake_tools_iree-check-module
+    cg_tools_iree-check-module
   )
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
   set(_TEST_NAME "${_PACKAGE_PATH}/${_RULE_NAME}")
 
@@ -142,7 +142,7 @@ function(cmake_check_test)
         ${_TEST_NAME}
       COMMAND
         "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_android_test.${IREE_HOST_SCRIPT_EXT}"
-        "${_ANDROID_REL_DIR}/$<TARGET_FILE_NAME:cmake_tools_iree-check-module>"
+        "${_ANDROID_REL_DIR}/$<TARGET_FILE_NAME:cg_tools_iree-check-module>"
         "--driver=${_RULE_DRIVER}"
         "${_ANDROID_REL_DIR}/${_MODULE_FILE_NAME}"
         ${_RULE_RUNNER_ARGS}
@@ -154,23 +154,23 @@ function(cmake_check_test)
       _ENVIRONMENT_VARS
         TEST_ANDROID_ABS_DIR=${_ANDROID_ABS_DIR}
         TEST_DATA=${CMAKE_CURRENT_BINARY_DIR}/${_MODULE_FILE_NAME}
-        TEST_EXECUTABLE=$<TARGET_FILE:cmake_tools_iree-check-module>
+        TEST_EXECUTABLE=$<TARGET_FILE:cg_tools_iree-check-module>
     )
     set_property(TEST ${_TEST_NAME} PROPERTY ENVIRONMENT ${_ENVIRONMENT_VARS})
-    cmake_add_test_environment_properties(${_TEST_NAME})
+    cg_add_test_environment_properties(${_TEST_NAME})
   else(ANDROID)
     add_test(
       NAME
         "${_TEST_NAME}"
       COMMAND
         "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
-        "$<TARGET_FILE:cmake_tools_iree-check-module>"
+        "$<TARGET_FILE:cg_tools_iree-check-module>"
         "--driver=${_RULE_DRIVER}"
         "${CMAKE_CURRENT_BINARY_DIR}/${_MODULE_FILE_NAME}"
         ${_RULE_RUNNER_ARGS}
     )
     set_property(TEST "${_TEST_NAME}" PROPERTY ENVIRONMENT "TEST_TMPDIR=${_NAME}_test_tmpdir")
-    cmake_add_test_environment_properties(${_TEST_NAME})
+    cg_add_test_environment_properties(${_TEST_NAME})
   endif(ANDROID)
 
   list(APPEND _RULE_LABELS "${_PACKAGE_PATH}" "driver=${_RULE_DRIVER}")
@@ -179,7 +179,7 @@ function(cmake_check_test)
 endfunction()
 
 
-# cmake_check_single_backend_test_suite()
+# cg_check_single_backend_test_suite()
 #
 # Creates a test suite of iree-check-module tests for a single backend/driver pair.
 #
@@ -195,16 +195,16 @@ endfunction()
 #       translation and backend flags are passed automatically.
 #   RUNNER_ARGS: additional args to pass to the underlying iree-check-module
 #       tests. The driver and input file are passed automatically. To use
-#       different args per test, create a separate suite or cmake_check_test.
+#       different args per test, create a separate suite or cg_check_test.
 #   LABELS: Additional labels to apply to the generated tests. The package path is
 #       added automatically.
-function(cmake_check_single_backend_test_suite)
+function(cg_check_single_backend_test_suite)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
 
   # Note: we could check IREE_BUILD_COMPILER here, but cross compilation makes
-  # that a little tricky. Instead, we let cmake_check_test handle the checks,
+  # that a little tricky. Instead, we let cg_check_test handle the checks,
   # meaning this function may run some configuration but generate no targets.
 
   cmake_parse_arguments(
@@ -242,7 +242,7 @@ function(cmake_check_single_backend_test_suite)
 
   foreach(_SRC IN LISTS _RULE_SRCS)
     set(_TEST_NAME "${_RULE_NAME}_${_SRC}")
-    cmake_check_test(
+    cg_check_test(
       NAME
         ${_TEST_NAME}
       SRC
@@ -262,7 +262,7 @@ function(cmake_check_single_backend_test_suite)
 endfunction()
 
 
-# cmake_check_test_suite()
+# cg_check_test_suite()
 #
 # Creates a test suite of iree-check-module tests.
 #
@@ -282,10 +282,10 @@ endfunction()
 #       specified, a test will be generated for every supported pair.
 #   RUNNER_ARGS: additional args to pass to the underlying iree-check-module tests. The
 #       driver and input file are passed automatically. To use different args per
-#       test, create a separate suite or cmake_check_test.
+#       test, create a separate suite or cg_check_test.
 #   LABELS: Additional labels to apply to the generated tests. The package path is
 #       added automatically.
-function(cmake_check_test_suite)
+function(cg_check_test_suite)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
@@ -316,7 +316,7 @@ function(cmake_check_test_suite)
     list(GET _RULE_TARGET_BACKENDS ${_INDEX} _TARGET_BACKEND)
     list(GET _RULE_DRIVERS ${_INDEX} _DRIVER)
     set(_SUITE_NAME "${_RULE_NAME}_${_TARGET_BACKEND}_${_DRIVER}")
-    cmake_check_single_backend_test_suite(
+    cg_check_single_backend_test_suite(
       NAME
         ${_SUITE_NAME}
       SRCS

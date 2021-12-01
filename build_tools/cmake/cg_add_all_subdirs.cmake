@@ -1,17 +1,17 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_add_all_subdirs.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_add_all_subdirs.cmake
 # Copyright 2020 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-# cmake_add_all_subidrs
+# cg_add_all_subidrs
 #
 # CMake function to add all subdirectories of the current directory that contain
 # a CMakeLists.txt file
 #
 # Takes no arguments.
-function(cmake_add_all_subdirs)
+function(cg_add_all_subdirs)
   FILE(GLOB _CHILDREN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
   SET(_DIRLIST "")
   foreach(_CHILD ${_CHILDREN})

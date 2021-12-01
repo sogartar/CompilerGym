@@ -4,7 +4,7 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-# cmake_add_installed_test()
+# cg_add_installed_test()
 #
 # Creates a build-time and exported install-time test. All tests are installed
 # into the tests/ tree. Calling code must arrange to install dependencies of the
@@ -19,7 +19,7 @@
 # WORKING_DIRECTORY: Passed to add_test() as is. Note that in the install tree
 # all tests run in the tests/ directory.
 # LABELS: Labels to pass to add_test() and installed tests.
-function(cmake_add_installed_test)
+function(cg_add_installed_test)
   cmake_parse_arguments(
     _RULE
     ""
@@ -56,11 +56,11 @@ function(cmake_add_installed_test)
       "TEST_TMPDIR=${CMAKE_BINARY_DIR}/${_RULE_TEST_NAME}_test_tmpdir"
       ${_RULE_ENVIRONMENT}
   )
-  cmake_add_test_environment_properties(${_RULE_TEST_NAME})
+  cg_add_test_environment_properties(${_RULE_TEST_NAME})
 
   # Write the to the installed ctest file template.
   set(_installed_ctest_input_file
-        "${CMAKE_BINARY_DIR}/cmake_installed_tests.cmake.in")
+        "${CMAKE_BINARY_DIR}/cg_installed_tests.cmake.in")
   get_property(_has_tests GLOBAL PROPERTY IREE_HAS_INSTALLED_TESTS)
   if(NOT _has_tests)
     # First time.
@@ -78,7 +78,7 @@ function(cmake_add_installed_test)
   # at the generate phase, it doesn't matter that we trigger it before all
   # tests accumulate.
   if(NOT _has_tests)
-    set(_installed_ctest_output_file "${CMAKE_BINARY_DIR}/cmake_installed_tests.cmake")
+    set(_installed_ctest_output_file "${CMAKE_BINARY_DIR}/cg_installed_tests.cmake")
     file(GENERATE
       OUTPUT "${_installed_ctest_output_file}"
       INPUT "${_installed_ctest_input_file}"

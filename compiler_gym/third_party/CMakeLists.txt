@@ -1,1 +1,1 @@
-cmake_add_all_subdirs()
+cg_add_all_subdirs()

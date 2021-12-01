@@ -8,7 +8,7 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
 iree_py_test(
   NAME
@@ -56,7 +56,7 @@ iree_py_test(
     tests::test_main
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     test_main
   SRCS
@@ -67,7 +67,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     TestMacros
   SRCS
@@ -75,7 +75,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     TestMain
   SRCS

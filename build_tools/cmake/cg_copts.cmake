@@ -14,7 +14,7 @@
 #         ██ ███ ██ ██   ██ ██   ██ ██  ██ ██ ██ ██  ██ ██ ██    ██
 #          ███ ███  ██   ██ ██   ██ ██   ████ ██ ██   ████  ██████
 #
-# Everything here is added to *every* cmake_cc_library/cmake_cc_binary/etc.
+# Everything here is added to *every* cg_cc_library/cg_cc_binary/etc.
 # That includes both runtime and compiler components, and these may propagate
 # out to user code interacting with either (such as custom modules).
 #
@@ -70,7 +70,7 @@ set(IREE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 # Compiler diagnostics.
 # Please keep these in sync with build_tools/bazel/iree.bazelrc
-cmake_select_compiler_opts(IREE_DEFAULT_COPTS
+cg_select_compiler_opts(IREE_DEFAULT_COPTS
   # Clang diagnostics. These largely match the set of warnings used within
   # Google. They have not been audited super carefully by the IREE team but are
   # generally thought to be a good set and consistency with those used

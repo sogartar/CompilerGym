@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 include(CMakeParseArguments)
-include(cmake_installed_test)
+include(cg_installed_test)
 
 ###############################################################################
 # Main user rules
@@ -44,7 +44,7 @@ include(cmake_installed_test)
 #   FILES_MATCHING: Explicit arguments to the install FILES_MATCHING directive.
 #     (Defaults to "PATTERN *.py")
 #   DEPS: Dependencies.
-function(cmake_py_install_package)
+function(cg_py_install_package)
   cmake_parse_arguments(ARG
     "AUGMENT_EXISTING_PACKAGE"
     "COMPONENT;PACKAGE_NAME;MODULE_PATH"
@@ -82,13 +82,13 @@ function(cmake_py_install_package)
     add_custom_target(${_target_name}
       COMMAND "${CMAKE_COMMAND}"
               ${_component_option}
-              -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+              -P "${CMAKE_BINARY_DIR}/cg_install.cmake"
       USES_TERMINAL)
     add_custom_target(${_target_name}-stripped
       COMMAND "${CMAKE_COMMAND}"
               ${_component_option}
               -DCMAKE_INSTALL_DO_STRIP=1
-              -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+              -P "${CMAKE_BINARY_DIR}/cg_install.cmake"
       USES_TERMINAL)
   endif()
 
@@ -111,7 +111,7 @@ function(cmake_py_install_package)
   set(PY_INSTALL_MODULE_DIR "${_install_module_dir}" PARENT_SCOPE)
 endfunction()
 
-# cmake_pyext_module()
+# cg_pyext_module()
 #
 # Builds a native python module (.so/.dylib/.pyd).
 #
@@ -120,18 +120,18 @@ endfunction()
 # MODULE_NAME: Base-name of the module.
 # SRCS: List of source files for the library
 # DEPS: List of other targets the test python libraries require
-function(cmake_pyext_module)
+function(cg_pyext_module)
   cmake_parse_arguments(ARG
     ""
     "NAME;MODULE_NAME;UNIX_LINKER_SCRIPT"
     "SRCS;DEPS;COPTS;INCLUDES"
     ${ARGN})
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   # Replace dependencies passed by ::name with ::iree::package::name
   list(TRANSFORM ARG_DEPS REPLACE "^::" "${_PACKAGE_NS}::")
   list(TRANSFORM ARG_PYEXT_DEPS REPLACE "^::" "${_PACKAGE_NS}::")
-  # Prefix the library with the package name, so we get: cmake_package_name.
+  # Prefix the library with the package name, so we get: cg_package_name.
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   pybind11_add_module(
@@ -139,7 +139,7 @@ function(cmake_pyext_module)
     ${ARG_SRCS}
   )
 
-  # Alias the cmake_package_name library to iree::package::name so that we can
+  # Alias the cg_package_name library to iree::package::name so that we can
   # refer to this target with the namespaced format.
   add_library(${_PACKAGE_NS}::${ARG_NAME} ALIAS ${_NAME})
 
@@ -163,7 +163,7 @@ function(cmake_pyext_module)
   # *the only* place in the codebase where we do this, just inline here.
   # Note that this is playing with fire and the extension code is structured
   # so as not to cause problems with RTTI cross-module issues.
-  cmake_select_compiler_opts(_RTTI_AND_EXCEPTION_COPTS
+  cg_select_compiler_opts(_RTTI_AND_EXCEPTION_COPTS
     CLANG_OR_GCC
       "-frtti"
       "-fexceptions"

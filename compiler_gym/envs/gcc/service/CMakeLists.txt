@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_filegroup(
+cg_filegroup(
   NAME "service"
   FILES
     "${CMAKE_CURRENT_LIST_DIR}/gcc_service.py"

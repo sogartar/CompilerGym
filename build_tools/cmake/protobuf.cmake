@@ -3,8 +3,8 @@
 
 include_guard(GLOBAL)
 include(CMakeParseArguments)
-include(cmake_macros)
-include(cmake_py_library)
+include(cg_macros)
+include(cg_py_library)
 
 function(proto_library)
   cmake_parse_arguments(
@@ -88,7 +88,7 @@ function(cc_proto_library)
       ${_DEPS}
     VERBATIM)
 
-  cmake_cc_library(
+  cg_cc_library(
     NAME ${_RULE_NAME}
     SRCS ${_CC_PROTO_FILES}
     ABS_DEPS protobuf::libprotobuf
@@ -142,7 +142,7 @@ function(py_proto_library)
       ${_DEPS}
     VERBATIM)
 
-  cmake_py_library(
+  cg_py_library(
     NAME "${_RULE_NAME}"
     GENERATED_SRCS ${_PY_PROTO_FILES}
     )

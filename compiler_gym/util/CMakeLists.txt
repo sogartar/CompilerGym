@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     util
   SRCS
@@ -45,7 +45,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     EnumUtil
   SRCS
@@ -57,7 +57,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     GrpcStatusMacros
   HDRS
@@ -70,7 +70,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     RunfilesPath
   HDRS
@@ -82,7 +82,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     StrLenConstexpr
   HDRS
@@ -90,7 +90,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     Subprocess
   HDRS
@@ -107,7 +107,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     Unreachable
   HDRS
@@ -117,14 +117,14 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_genrule(
+cg_genrule(
   NAME make_version
   OUTS "version.py"
   SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../../VERSION"
   COMMAND "echo \"__version__ = \\\"$(cat \"${CMAKE_CURRENT_SOURCE_DIR}/../../VERSION\")\\\"\" > $@"
 )
 
-cmake_cc_library(
+cg_cc_library(
   NAME
     Version
   HDRS
@@ -132,7 +132,7 @@ cmake_cc_library(
   PUBLIC
 )
 
-cmake_genrule(
+cg_genrule(
   NAME make_version_header
   OUTS "Version.h"
   SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../../VERSION"

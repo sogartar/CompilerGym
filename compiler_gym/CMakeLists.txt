@@ -8,14 +8,14 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
 # This target trickery with compiler_gym and compiler_gym_partial
 # is needed because specs.py imports the compiler_gym module,
 # therefore creating a circular dependency.
 # compiler_gym_partial is all the other bits of the proto package so that
 # specs.py can import it.
-cmake_py_library(
+cg_py_library(
   NAME
     compiler_gym
   GENERATED_SRCS
@@ -26,7 +26,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     compiler_gym_partial
   SRCS
@@ -47,7 +47,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     compiler_env_state
   SRCS
@@ -58,7 +58,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     random_replay
   SRCS
@@ -70,7 +70,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     random_search
   SRCS
@@ -84,7 +84,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     validate
   SRCS
@@ -98,7 +98,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     validation_error
   SRCS
@@ -106,7 +106,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_library(
+cg_py_library(
   NAME
     validation_result
   SRCS

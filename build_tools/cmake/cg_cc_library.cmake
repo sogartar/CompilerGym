@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_library.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_library.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -7,7 +7,7 @@
 
 include(CMakeParseArguments)
 
-# cmake_cc_library()
+# cg_cc_library()
 #
 # CMake function to imitate Bazel's cc_library rule.
 #
@@ -28,11 +28,11 @@ include(CMakeParseArguments)
 # SHARED: If set, will compile to a shared object.
 #
 # Note:
-# By default, cmake_cc_library will always create a library named cmake_${NAME},
+# By default, cg_cc_library will always create a library named cg_${NAME},
 # and alias target iree::${NAME}. The iree:: form should always be used.
 # This is to reduce namespace pollution.
 #
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     awesome
 #   HDRS
@@ -40,7 +40,7 @@ include(CMakeParseArguments)
 #   SRCS
 #     "a.cc"
 # )
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     fantastic_lib
 #   SRCS
@@ -50,14 +50,14 @@ include(CMakeParseArguments)
 #   PUBLIC
 # )
 #
-# cmake_cc_library(
+# cg_cc_library(
 #   NAME
 #     main_lib
 #   ...
 #   DEPS
 #     iree::package::fantastic_lib
 # )
-function(cmake_cc_library)
+function(cg_cc_library)
   cmake_parse_arguments(
     _RULE
     "PUBLIC;TESTONLY;SHARED"
@@ -70,11 +70,11 @@ function(cmake_cc_library)
     return()
   endif()
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   rename_bazel_targets(_DEPS "${_RULE_DEPS}")
   list(APPEND _DEPS ${_RULE_ABS_DEPS})
 
-  # Prefix the library with the package name, so we get: cmake_package_name.
+  # Prefix the library with the package name, so we get: cg_package_name.
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   # Check if this is a header-only library.
@@ -174,14 +174,14 @@ function(cmake_cc_library)
     )
   endif()
 
-  cmake_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   if (_RULE_NON_LIB_DEPS)
     rename_bazel_targets(_NON_LIB_DEPS "${_RULE_NON_LIB_DEPS}")
     add_dependencies(${_NAME} ${_NON_LIB_DEPS})
   endif()
 
-  # Alias the cmake_package_name library to iree::package::name.
+  # Alias the cg_package_name library to iree::package::name.
   # This lets us more clearly map to Bazel and makes it possible to
   # disambiguate the underscores in paths vs. the separators.
   add_library(${_PACKAGE_NS}::${_RULE_NAME} ALIAS ${_NAME})
@@ -189,7 +189,7 @@ function(cmake_cc_library)
   # If the library name matches the final component of the package then treat
   # it as a default. For example, foo/bar/ library 'bar' would end up as
   # 'foo::bar'.
-  cmake_package_dir(_PACKAGE_DIR)
+  cg_package_dir(_PACKAGE_DIR)
   if(${_RULE_NAME} STREQUAL ${_PACKAGE_DIR})
     add_library(${_PACKAGE_NS} ALIAS ${_NAME})
   endif()

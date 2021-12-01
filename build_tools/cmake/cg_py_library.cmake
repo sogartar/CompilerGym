@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_library.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_library.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -8,9 +8,9 @@
 include_guard(GLOBAL)
 
 include(CMakeParseArguments)
-include(cmake_macros)
+include(cg_macros)
 
-# cmake_py_library()
+# cg_py_library()
 #
 # CMake function to imitate Bazel's py_library rule.
 #
@@ -25,11 +25,11 @@ include(cmake_macros)
 # TESTONLY: When added, this target will only be built if user passes -DIREE_BUILD_TESTS=ON to CMake.
 #
 # Note:
-# By default, cmake_py_library will always create a library named cmake_${NAME},
+# By default, cg_py_library will always create a library named cg_${NAME},
 # and alias target iree::${NAME}. The iree:: form should always be used.
 # This is to reduce namespace pollution.
 #
-function(cmake_py_library)
+function(cg_py_library)
   cmake_parse_arguments(
     _RULE
     "PUBLIC;TESTONLY"
@@ -45,7 +45,7 @@ function(cmake_py_library)
     # TODO(boian): remove this renaming when call sites do not include ":" in target dependency names
   rename_bazel_targets(_RULE_DEPS "${_RULE_DEPS}")
 
-  # Prefix the library with the package name, so we get: cmake_package_name.
+  # Prefix the library with the package name, so we get: cg_package_name.
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   unset(_BIN_PATHS)
@@ -77,7 +77,7 @@ function(cmake_py_library)
   set(_DEPS ${_RULE_DEPS} ${_BIN_PATHS})
   add_custom_target(${_NAME} ALL DEPENDS ${_DEPS})
 
-  cmake_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   # If only one src file set the LOCATION target property to point to it.
   list(LENGTH _BIN_PATHS _BIN_PATHS_LENGTH)

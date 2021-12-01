@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_library.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_library.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -8,9 +8,9 @@
 include_guard(GLOBAL)
 
 include(CMakeParseArguments)
-include(cmake_macros)
+include(cg_macros)
 
-# cmake_genrule()
+# cg_genrule()
 #
 # CMake function to imitate Bazel's genrule rule.
 #
@@ -25,11 +25,11 @@ include(cmake_macros)
 # TESTONLY: When added, this target will only be built if user passes -DIREE_BUILD_TESTS=ON to CMake.
 #
 # Note:
-# By default, cmake_genrule will always create a library named cmake_${NAME},
+# By default, cg_genrule will always create a library named cg_${NAME},
 # and alias target iree::${NAME}. The iree:: form should always be used.
 # This is to reduce namespace pollution.
 #
-function(cmake_genrule)
+function(cg_genrule)
   cmake_parse_arguments(
     _RULE
     "PUBLIC;TESTONLY"

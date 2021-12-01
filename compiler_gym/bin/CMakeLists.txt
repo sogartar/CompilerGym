@@ -8,9 +8,9 @@
 # To disable autogeneration for this file entirely, delete this header.        #
 ################################################################################
 
-cmake_add_all_subdirs()
+cg_add_all_subdirs()
 
-cmake_py_library(
+cg_py_library(
   NAME
     bin
   DEPS
@@ -23,7 +23,7 @@ cmake_py_library(
   PUBLIC
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     datasets
   SRCS
@@ -36,7 +36,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     manual_env
   SRCS
@@ -47,7 +47,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     random_eval
   SRCS
@@ -58,7 +58,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     random_search
   SRCS
@@ -68,7 +68,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     random_replay
   SRCS
@@ -79,7 +79,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     service
   SRCS
@@ -92,7 +92,7 @@ cmake_py_binary(
     compiler_gym::util::flags::flags
 )
 
-cmake_py_binary(
+cg_py_binary(
   NAME
     validate
   SRCS

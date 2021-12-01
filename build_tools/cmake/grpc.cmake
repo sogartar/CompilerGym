@@ -3,8 +3,8 @@
 
 include_guard(GLOBAL)
 include(CMakeParseArguments)
-include(cmake_macros)
-include(cmake_py_library)
+include(cg_macros)
+include(cg_py_library)
 include(protobuf)
 
 function(get_cc_grpc_proto_out_files _PROTO_FILENAME _RESULT)
@@ -58,7 +58,7 @@ function(cc_grpc_library)
     DEPENDS "${Protobuf_PROTOC_EXECUTABLE}" "${_DESCRIPTOR_SET_FILE}" "${_PROTO_FILE}" ${_DEPS}
     VERBATIM)
 
-  cmake_cc_library(
+  cg_cc_library(
     NAME ${_RULE_NAME}
     SRCS ${_GRPC_PROTO_FILES}
     ABS_DEPS grpc++
@@ -111,7 +111,7 @@ function(py_grpc_library)
     DEPENDS "${Python3_EXECUTABLE}" "${_DESCRIPTOR_SET_FILE}" "${_PROTO_FILE}" ${_DEPS}
     VERBATIM)
 
-  cmake_py_library(
+  cg_py_library(
     NAME "${_RULE_NAME}"
     GENERATED_SRCS ${_PY_GRPC_PROTO_FILES}
     )

@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cmake_cc_test.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_test.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -6,9 +6,9 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 include(CMakeParseArguments)
-include(cmake_installed_test)
+include(cg_installed_test)
 
-# cmake_py_test()
+# cg_py_test()
 #
 # CMake function to imitate Bazel's cc_test rule.
 #
@@ -22,10 +22,10 @@ include(cmake_installed_test)
 # ARGS command line arguments for the test.
 #
 # Note:
-# cmake_cc_test will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
-# cmake_base_foo_test.
+# cg_cc_test will create a binary called ${PACKAGE_NAME}_${NAME}, e.g.
+# cg_base_foo_test.
 #
-function(cmake_py_test)
+function(cg_py_test)
   if(NOT IREE_BUILD_TESTS)
     return()
   endif()
@@ -46,12 +46,12 @@ function(cmake_py_test)
 
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
-  cmake_package_ns(_PACKAGE_NS)
+  cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
   set(_NAME_PATH "${_PACKAGE_PATH}/${_RULE_NAME}")
   set(_RULE_LABELS "${_PACKAGE_PATH}")
 
-  cmake_add_installed_test(
+  cg_add_installed_test(
     TEST_NAME "${_NAME_PATH}"
     LABELS "${_RULE_LABELS}"
     ENVIRONMENT
@@ -66,7 +66,7 @@ function(cmake_py_test)
       "${_PACKAGE_PATH}/${_RULE_SRCS}"
   )
 
-  cmake_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   install(FILES ${_RULE_SRCS}
     DESTINATION "tests/${_PACKAGE_PATH}"

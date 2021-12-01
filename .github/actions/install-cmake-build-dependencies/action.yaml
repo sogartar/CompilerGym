@@ -4,8 +4,9 @@ description: Install CMake build dependencies
 runs:
     using: composite
     steps:
-        - name: Install dependencies
-          uses: ./.github/actions/install-build-dependencies
+        - uses: ./.github/actions/install-build-dependencies
+
+        - name: Install CMake dependencies
           run: |
               if [ "$(uname)" = "Darwin" ]; then
                   echo "CMake build for Darwin is unimplemented."

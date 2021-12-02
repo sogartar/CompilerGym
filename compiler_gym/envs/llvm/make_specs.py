@@ -14,8 +14,6 @@ import sys
 import types
 from pathlib import Path
 
-from compiler_gym.util.runfiles_path import runfiles_path
-
 # Avoids circular dependency during specs.py generation,
 # because it is imported from compiler_gym.envs.llvm before being generated.
 sys.modules["compiler_gym.envs.llvm.is_making_specs"] = types.ModuleType(
@@ -23,6 +21,7 @@ sys.modules["compiler_gym.envs.llvm.is_making_specs"] = types.ModuleType(
 )
 
 from compiler_gym.envs.llvm.llvm_env import LlvmEnv  # noqa: E402
+from compiler_gym.util.runfiles_path import runfiles_path  # noqa: E402
 
 with open(
     runfiles_path("compiler_gym/envs/llvm/service/passes/flag_descriptions.txt")

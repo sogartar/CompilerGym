@@ -55,7 +55,7 @@ cg_py_library(
   SRCS
     "random_util.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
   TESTONLY
   PUBLIC
 )

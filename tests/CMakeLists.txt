@@ -28,7 +28,7 @@ cg_py_test(
   SRCS
     "compiler_env_state_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::test_main
 )
@@ -39,7 +39,7 @@ cg_py_test(
   SRCS
     "make_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::test_main
 )
 
@@ -49,7 +49,7 @@ cg_py_test(
   SRCS
     "random_search_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::random_replay
     compiler_gym::random_search
     tests::pytest_plugins::common
@@ -80,8 +80,8 @@ cg_cc_library(
     TestMain
   SRCS
     "TestMain.cc"
-  DEPS
-    glog
+  ABS_DEPS
+    glog::glog
     GTest::GTest
   TESTONLY
   PUBLIC
@@ -94,7 +94,7 @@ cg_py_test(
     "validate_test.py"
   DEPS
     ::test_main
-    compiler_gym
+    compiler_gym::compiler_gym
 )
 
 cg_py_test(
@@ -104,7 +104,7 @@ cg_py_test(
     "validation_result_test.py"
   DEPS
     ::test_main
-    compiler_gym
+    compiler_gym::compiler_gym
 )
 
 cg_py_test(
@@ -113,10 +113,10 @@ cg_py_test(
   SRCS
     "version_test.py"
   DATA
-    ::VERSION
+    "${CMAKE_CURRENT_SOURCE_DIR}/../VERSION"
   DEPS
     ::test_main
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
 )
 

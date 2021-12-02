@@ -56,7 +56,7 @@ function(cg_cc_binary)
     ${ARGN}
   )
 
-  if(_RULE_TESTONLY AND NOT IREE_BUILD_TESTS)
+  if(_RULE_TESTONLY AND NOT COMPILER_GYM_BUILD_TESTS)
     return()
   endif()
 

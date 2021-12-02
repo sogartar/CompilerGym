@@ -16,7 +16,7 @@ cg_py_test(
   SRCS
     "connection_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::envs::envs
     compiler_gym::service::service
     tests::test_main

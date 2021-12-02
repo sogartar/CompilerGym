@@ -19,6 +19,7 @@ cg_cc_test(
     compiler_gym::envs::llvm::service::ActionSpace
     tests::TestMacros
     tests::TestMain
+  ABS_DEPS
     GTest::GTest
     magic_enum
 )

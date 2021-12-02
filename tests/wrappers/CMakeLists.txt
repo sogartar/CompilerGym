@@ -44,6 +44,16 @@ cg_py_test(
 )
 
 cg_py_test(
+  NAME llvm_test
+  SRCS "llvm_test.py"
+  DEPS
+    compiler_gym::envs::llvm::llvm
+    compiler_gym::wrappers::wrappers
+    tests::test_main
+    tests::pytest_plugins::llvm
+)
+
+cg_py_test(
   NAME
     time_limit_wrappers_test
   SRCS

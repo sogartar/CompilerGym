@@ -42,7 +42,7 @@ cg_py_test(
   SRCS
     "cbench_validate_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::datasets::datasets
     compiler_gym::envs::envs
     tests::pytest_plugins::llvm

@@ -38,7 +38,7 @@ cg_py_test(
   SRCS
     "service_bin_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::bin::service
     tests::test_main
 )
@@ -49,7 +49,7 @@ cg_py_test(
   SRCS
     "validate_bin_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::bin::validate
     tests::pytest_plugins::common
     tests::test_main

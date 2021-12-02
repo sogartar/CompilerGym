@@ -26,47 +26,48 @@ include(cg_installed_test)
 # cg_base_foo_test.
 #
 function(cg_py_test)
-  if(NOT IREE_BUILD_TESTS)
+  if(NOT COMPILER_GYM_BUILD_TESTS)
     return()
   endif()
 
   cmake_parse_arguments(
     _RULE
-    "GENERATED_IN_BINARY_DIR"
+    ""
     "NAME;SRCS"
-    "ARGS;LABELS;DATA"
+    "ARGS;LABELS;DATA;DEPS"
     ${ARGN}
   )
 
-  # Switch between source and generated tests.
-  set(_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-  if(_RULE_GENERATED_IN_BINARY_DIR)
-    set(_SRC_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-  endif()
+  cg_py_binary(
+    NAME ${_RULE_NAME}
+    SRCS ${_RULE_SRCS}
+    DEPS ${_RULE_DEPS}
+    DATA ${_RULE_DATA}
+  )
 
   rename_bazel_targets(_NAME "${_RULE_NAME}")
-
   cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
-  set(_NAME_PATH "${_PACKAGE_PATH}/${_RULE_NAME}")
-  set(_RULE_LABELS "${_PACKAGE_PATH}")
+  set(_TEST_NAME "${_PACKAGE_PATH}/${_RULE_NAME}")
+  set(_LABELS "${_RULE_LABELS}")
+  list(APPEND _LABELS "${_PACKAGE_PATH}")
 
   cg_add_installed_test(
-    TEST_NAME "${_NAME_PATH}"
-    LABELS "${_RULE_LABELS}"
+    TEST_NAME "${_TEST_NAME}"
+    LABELS "${_LABELS}"
     ENVIRONMENT
-      "PYTHONPATH=${IREE_BINARY_DIR}/compiler-api/python_package:${IREE_BINARY_DIR}/bindings/python:$ENV{PYTHONPATH}"
+      "PYTHONPATH=${CMAKE_BINARY_DIR}:$ENV{PYTHONPATH}"
     COMMAND
-      "${IREE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
+      "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
       "${Python3_EXECUTABLE}"
-      "${_SRC_DIR}/${_RULE_SRCS}"
+      "${CMAKE_BINARY_DIR}/${_RULE_SRCS}"
       ${_RULE_ARGS}
     INSTALLED_COMMAND
       python
       "${_PACKAGE_PATH}/${_RULE_SRCS}"
   )
 
-  cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
+  #cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
   install(FILES ${_RULE_SRCS}
     DESTINATION "tests/${_PACKAGE_PATH}"

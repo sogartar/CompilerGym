@@ -10,28 +10,13 @@
 
 cg_add_all_subdirs()
 
-cg_py_test(
-  NAME
-    benchmark_cache_test
-  SRCS
-    "benchmark_cache_test.py"
+py_test(
+  NAME py_converters_test
+  SRCS "py_converters_test.py"
   DEPS
     compiler_gym::service::proto::proto
-    compiler_gym::service::runtime::benchmark_cache
+    compiler_gym::spaces::spaces
     tests::test_main
-)
-
-cg_cc_test(
-  NAME
-    BenchmarkCacheTest
-  SRCS
-    "BenchmarkCacheTest.cc"
-  DEPS
-    compiler_gym::service::proto::compiler_gym_service_cc
-    compiler_gym::service::runtime::BenchmarkCache
-    tests::TestMain
-  ABS_DEPS
-    GTest::GTest
 )
 
 ### BAZEL_TO_CMAKE_PRESERVES_ALL_CONTENT_BELOW_THIS_LINE ###

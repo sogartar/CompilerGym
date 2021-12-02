@@ -38,7 +38,7 @@ function(cg_genrule)
     ${ARGN}
   )
 
-  if(_RULE_TESTONLY AND NOT IREE_BUILD_TESTS)
+  if(_RULE_TESTONLY AND NOT COMPILER_GYM_BUILD_TESTS)
     return()
   endif()
 
@@ -59,9 +59,16 @@ function(cg_genrule)
     RESULT_VARIABLE _OUTS
   )
 
+  list(LENGTH _OUTS _OUTS_LENGTH)
+  if(_OUTS_LENGTH EQUAL 1)
+    get_filename_component(_OUTS_DIR "${_OUTS}" DIRECTORY)
+  else()
+    set(_OUTS_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+  endif()
+
   # Substitute special Bazel references
-  string(REPLACE  "$@" "\"${_OUTS}\"" _CMD "${_RULE_COMMAND}")
-  string(REPLACE  "$(@D)" "\"${CMAKE_CURRENT_BINARY_DIR}\"" _CMD "${_CMD}")
+  string(REPLACE  "$@" "${_OUTS}" _CMD "${_RULE_COMMAND}")
+  string(REPLACE  "$(@D)" "${_OUTS_DIR}" _CMD "${_CMD}")
   #string(REPLACE  "$<" "\"${_SRCS}\"" _CMD "${_CMD}")
 
   add_custom_command(

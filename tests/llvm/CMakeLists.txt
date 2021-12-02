@@ -11,6 +11,15 @@
 cg_add_all_subdirs()
 
 cg_py_test(
+  NAME action_space_test
+  SRCS "action_space_test.py"
+  DEPS
+    compiler_gym::envs::envs
+    tests::test_main
+    tests::pytest_plugins::llvm
+)
+
+cg_py_test(
   NAME
     all_actions_single_step_test
   SRCS
@@ -113,6 +122,15 @@ cg_py_test(
     tests::test_main
 )
 
+py_test(
+  NAME fork_regression_test
+  SRCS fork_regression_test.py
+  DEPS
+    compiler_gym::envs::envs
+    tests::test_main
+    tests::pytest_plugins::llvm
+)
+
 cg_py_test(
   NAME
     fresh_environment_observation_reward_test
@@ -131,17 +149,6 @@ cg_py_test(
     "fuzzing_regression_test.py"
   DEPS
     tests::pytest_plugins::common
-    tests::pytest_plugins::llvm
-    tests::test_main
-)
-
-cg_py_test(
-  NAME
-    gvn_sink_test
-  SRCS
-    "gvn_sink_test.py"
-  DEPS
-    compiler_gym::envs::envs
     tests::pytest_plugins::llvm
     tests::test_main
 )
@@ -192,7 +199,7 @@ cg_py_test(
   SRCS
     "llvm_env_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::pytest_plugins::llvm
     tests::test_main
@@ -215,7 +222,7 @@ cg_py_test(
   SRCS
     "module_id_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::pytest_plugins::llvm
     tests::test_main
@@ -227,7 +234,7 @@ cg_py_test(
   SRCS
     "multiprocessing_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::test_main
 )
@@ -255,12 +262,22 @@ cg_py_test(
 )
 
 cg_py_test(
+    NAME runtime_test
+    SRCS "runtime_test.py"
+    DEPS
+      compiler_gym::envs::llvm::llvm
+      compiler_gym::service::connection
+      tests::test_main
+      tests::pytest_plugins::llvm
+)
+
+cg_py_test(
   NAME
     service_connection_test
   SRCS
     "service_connection_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::envs::envs
     compiler_gym::third_party::autophase::autophase
     compiler_gym::util::util
@@ -274,7 +291,7 @@ cg_py_test(
   SRCS
     "threading_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::test_main
 )
 
@@ -284,7 +301,7 @@ cg_py_test(
   SRCS
     "validate_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     compiler_gym::datasets::datasets
     compiler_gym::envs::envs
     tests::pytest_plugins::llvm
@@ -297,7 +314,7 @@ cg_py_test(
   SRCS
     "validation_regression_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::pytest_plugins::llvm
     tests::test_main

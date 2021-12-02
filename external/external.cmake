@@ -238,112 +238,133 @@ source_group(
 FetchContent_Declare(
     cBench
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cbench"
-    SOURCE_DIR "${CMAKE_BINARY_DIR}/compiler_gym/third_party/cbench"
     URL "https://dl.fbaipublicfiles.com/compiler_gym/cBench_V1.1.tar.gz"
     URL_HASH "SHA256=8908d742f5223f09f9a4d10f7e06bc805a0c1694aa70974d2aae91ab627b51e6"
     DOWNLOAD_NO_EXTRACT FALSE
 )
-list(APPEND FETCH_CONTENT_LIST cBench)
+FetchContent_MakeAvailable(cBench)
+FetchContent_GetProperties(cBench SOURCE_DIR cBench_SRC_DIR)
 
-file(GLOB CBENCH-SRCS "cbench/**")
-
-source_group(
-    cbench
-    FILES CBENCH-SRCS
-)
-
-source_group(
-    cbench-readme
-    FILES "cbench/README.md"
-)
-
-ExternalProject_Add(
+FetchContent_Declare(
     ctuning-ai
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/ctuning-ai"
     URL "https://github.com/ChrisCummins/ck-mlops/archive/406738ad6d1fb2c1da9daa2c09d26fccab4e0938.tar.gz"
     URL_HASH "SHA256=a82c13733696c46b5201c614fcf7229c3a74a83ce485cab2fbf17309b7564f9c"
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
 )
+FetchContent_MakeAvailable(ctuning-ai)
+FetchContent_GetProperties(ctuning-ai SOURCE_DIR ctuning_ai_SRC_DIR)
 
 # # Datasets.
 
 FetchContent_Declare(
-  cDatasets_V1.1_consumer_tiff_data
+  cBench_consumer_tiff_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_tiff_data"
   URL      "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_consumer_tiff_data.tar.gz"
   URL_HASH "SHA256=779abb7b7fee8733313e462e6066c16375e9209a9f7ff692fd06c7598946939a"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_consumer_tiff_data)
+FetchContent_MakeAvailable(cBench_consumer_tiff_data)
+set(cBench_consumer_tiff_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_tiff_data/src/cDatasets_V1.1_consumer_tiff_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_office_data
+  cBench_office_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_office_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_office_data.tar.gz"
   URL_HASH "SHA256=cfa09cd37cb93aba57415033905dc6308653c7b833feba5a25067bfb62999f32"
 )
+FetchContent_MakeAvailable(cBench_office_data)
+set(cBench_office_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_office_data/src/cDatasets_V1.1_office_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_telecom_data
+  cBench_telecom_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_telecom_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_telecom_data.tar.gz"
   URL_HASH "SHA256=e5cb6663beefe32fd12f90c8f533f8e1bce2f05ee4e3836efb5556d5e1089df0"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_telecom_data)
+FetchContent_MakeAvailable(cBench_telecom_data)
+set(cBench_telecom_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_telecom_data/src/cDatasets_V1.1_telecom_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_consumer_jpeg_data
+  cBench_consumer_jpeg_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_jpeg_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_consumer_jpeg_data.tar.gz"
   URL_HASH "SHA256=bec5ffc15cd2f952d9a786f3cd31d90955c318a5e4f69c5ba472f79d5a3e8f0b"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_consumer_jpeg_data)
+FetchContent_MakeAvailable(cBench_consumer_jpeg_data)
+set(cBench_consumer_jpeg_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_jpeg_data/src/cDatasets_V1.1_consumer_jpeg_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_telecom_gsm_data
+  cBench_telecom_gsm_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_telecom_gsm_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_telecom_gsm_data.tar.gz"
   URL_HASH "SHA256=52545d3a0ce15021131c62d96d3a3d7e6670e2d6c34226ac9a3d5191a1ee214a"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_telecom_gsm_data)
+FetchContent_MakeAvailable(cBench_telecom_gsm_data)
+set(cBench_telecom_gsm_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_telecom_gsm_data/src/cDatasets_V1.1_telecom_gsm_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_consumer_data
+  cBench_consumer_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_consumer_data.tar.gz"
   URL_HASH "SHA256=a4d40344af3022bfd7b4c6fcf6d59d598825b07d9e37769dbf1b3effa39aa445"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_consumer_data)
+FetchContent_MakeAvailable(cBench_consumer_data)
+set(cBench_consumer_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_consumer_data/src/cDatasets_V1.1_consumer_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_bzip2_data
+  cBench_bzip2_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_bzip2_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_bzip2_data.tar.gz"
   URL_HASH "SHA256=46e5760eeef77e6b0c273af92de971bc45f33a59e0efc183073d9aa6b716c302"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_bzip2_data)
+FetchContent_MakeAvailable(cBench_bzip2_data)
+set(cBench_bzip2_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_bzip2_data/src/cDatasets_V1.1_bzip2_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_network_patricia_data
+  cBench_network_patricia_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_network_patricia_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_network_patricia_data.tar.gz"
   URL_HASH "SHA256=72dae0e670d93ef929e50aca7a138463e0915502281ccafe793e378cb2a85dfb"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_network_patricia_data)
+FetchContent_MakeAvailable(cBench_network_patricia_data)
+set(cBench_network_patricia_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_network_patricia_data/src/cDatasets_V1.1_network_patricia_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_network_dijkstra_data
+  cBench_network_dijkstra_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_network_dijkstra_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_network_dijkstra_data.tar.gz"
   URL_HASH "SHA256=41c13f59cdfbc772081cd941f499b030370bc570fc2ba60a5c4b7194bc36ca5f"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_network_dijkstra_data)
+FetchContent_MakeAvailable(cBench_network_dijkstra_data)
+set(cBench_network_dijkstra_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_network_dijkstra_data/src/cDatasets_V1.1_network_dijkstra_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_automotive_susan_data
+  cBench_automotive_susan_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_automotive_susan_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_automotive_susan_data.tar.gz"
   URL_HASH "SHA256=df56e1e44ccc560072381cdb001d770003ac74f92593dd5dbdfdd4ff9332a8e6"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_automotive_susan_data)
+FetchContent_MakeAvailable(cBench_automotive_susan_data)
+set(cBench_automotive_susan_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_automotive_susan_data/src/cDatasets_V1.1_automotive_susan_data.tar.gz")
 
 FetchContent_Declare(
-  cDatasets_V1.1_automotive_qsort_data
+  cBench_automotive_qsort_data
+  PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_automotive_qsort_data"
   URL "https://downloads.sourceforge.net/project/cbenchmark/cDatasets/V1.1/cDatasets_V1.1_automotive_qsort_data.tar.gz"
   URL_HASH "SHA256=510b4225021408ac190f6f793e7d7171d3553c9916cfa8b2fb4ace005105e768"
 )
-FetchContent_MakeAvailable(cDatasets_V1.1_automotive_qsort_data)
+FetchContent_MakeAvailable(cBench_automotive_qsort_data)
+set(cBench_automotive_qsort_data_FILE
+  "${CMAKE_CURRENT_BINARY_DIR}/external/cBench_automotive_qsort_data/src/cDatasets_V1.1_automotive_qsort_data.tar.gz")
 
 # # === C++ cpuinfo ===
 
@@ -454,7 +475,3 @@ find_package(Labm8 REQUIRED)
 find_package(ProGraML REQUIRED)
 
 FetchContent_MakeAvailable(${FETCH_CONTENT_LIST})
-
-if(NOT TARGET glog)
-
-endif()

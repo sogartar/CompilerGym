@@ -16,7 +16,7 @@ cg_py_test(
   SRCS
     "llvm_cbench_validate_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::llvm
     tests::test_main
   LABELS
@@ -29,7 +29,7 @@ cg_py_test(
   SRCS
     "llvm_commandline_opt_equivalence_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::common
     tests::pytest_plugins::llvm
     tests::pytest_plugins::random_util
@@ -44,7 +44,7 @@ cg_py_test(
   SRCS
     "llvm_deterministic_action_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::llvm
     tests::test_main
   LABELS
@@ -57,27 +57,28 @@ cg_py_test(
   SRCS
     "llvm_fork_env_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::llvm
     tests::test_main
   LABELS
     "manual"
 )
 
-cg_py_test(
-  NAME
-    benchmarks_random_actions_test
-  SRCS
-    "benchmarks_random_actions_test.py"
-  DEPS
-    compiler_gym
-    compiler_gym::envs::envs
-    compiler_gym::third_party::autophase::autophase
-    tests::pytest_plugins::llvm
-    tests::test_main
-  LABELS
-    "manual"
-)
+# TODO(boian): fix when benchmarks_random_actions_test.py is present in source.
+#cg_py_test(
+#  NAME
+#    benchmarks_random_actions_test
+#  SRCS
+#    "benchmarks_random_actions_test.py"
+#  DEPS
+#    compiler_gym::compiler_gym
+#    compiler_gym::envs::envs
+#    compiler_gym::third_party::autophase::autophase
+#    tests::pytest_plugins::llvm
+#    tests::test_main
+#  LABELS
+#    "manual"
+#)
 
 cg_py_test(
   NAME
@@ -85,7 +86,7 @@ cg_py_test(
   SRCS
     "llvm_trajectory_replay_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::llvm
     tests::pytest_plugins::random_util
     tests::test_main
@@ -99,7 +100,7 @@ cg_py_test(
   SRCS
     "llvm_stress_fuzz_test.py"
   DEPS
-    compiler_gym
+    compiler_gym::compiler_gym
     tests::pytest_plugins::llvm
     tests::pytest_plugins::random_util
     tests::test_main

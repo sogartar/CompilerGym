@@ -1,7 +1,7 @@
 function(cg_filegroup)
   cmake_parse_arguments(
     _ARG
-    ""
+    "PUBLIC"
     "NAME"
     "FILES;DEPENDS"
     ${ARGN}

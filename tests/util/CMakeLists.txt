@@ -41,6 +41,14 @@ cg_py_test(
     tests::test_main
 )
 
+cg_py_test(
+  NAME executor_test
+  SRCS executor_test.py
+  DEPS
+    compiler_gym::util::util
+    tests::test_main
+)
+
 cg_cc_test(
   NAME
     EnumUtilTest
@@ -50,6 +58,7 @@ cg_cc_test(
     compiler_gym::util::EnumUtil
     tests::TestMacros
     tests::TestMain
+  ABS_DEPS
     GTest::GTest
 )
 
@@ -80,6 +89,23 @@ cg_py_test(
     parallelization_test
   SRCS
     "parallelization_test.py"
+  DEPS
+    compiler_gym::util::util
+    tests::test_main
+)
+
+cg_py_test(
+  NAME runfiles_path_test
+  SRCS "runfiles_path_test.py"
+  DEPS
+    compiler_gym::util::util
+    tests::test_main
+    tests::pytest_plugins::common
+)
+
+cg_py_test(
+  NAME shell_format_test
+  SRCS shell_format_test.py
   DEPS
     compiler_gym::util::util
     tests::test_main

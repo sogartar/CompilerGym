@@ -265,9 +265,24 @@ function(cg_add_data_dependencies)
 
   foreach(_DATA ${_RULE_DATA})
     if(IS_ABSOLUTE "${_DATA}")
-      string(REPLACE "/" "_" _TARGET "${_DATA}")
+      get_filename_component(FILE_ "${_DATA}" ABSOLUTE)
+      string(REPLACE "/" "_" _TARGET "${FILE_}")
       string(PREPEND _TARGET "${_NAME}_data_")
-      add_custom_target(${_TARGET} DEPENDS "${_DATA}")
+      get_filename_component(_FILE_NAME "${FILE_}" NAME)
+      set(_DST_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+      set(_DST_PATH "${_DST_DIR}/${_FILE_NAME}")
+      if(NOT _DST_PATH STREQUAL _DATA)
+        add_custom_command(
+          OUTPUT "${_DST_PATH}"
+          COMMAND
+            ${CMAKE_COMMAND} -E make_directory "${_DST_DIR}"
+          COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${FILE_}" "${_DST_PATH}"
+          DEPENDS "${FILE_}"
+          VERBATIM
+        )
+      endif()
+      add_custom_target(${_TARGET} DEPENDS "${FILE_}")
     else()
       rename_bazel_targets(_TARGET "${_DATA}")
     endif()

@@ -42,7 +42,7 @@ if(COMPILER_GYM_BENCHMARK_PROVIDER STREQUAL "internal")
     set(_CMAKE_CXX_STANDARD_OLD ${CMAKE_CXX_STANDARD})
     unset(CMAKE_CXX_STANDARD CACHE)
 
-    option(BENCHMARK_ENABLE_GTEST_TESTS "Enable building the unit tests which depend on gtest" OFF)
+    set(BENCHMARK_ENABLE_TESTING OFF)
 
     add_subdirectory(${benchmark_SOURCE_DIR} ${benchmark_BINARY_DIR})
 

@@ -12,12 +12,12 @@ include(CMakeParseArguments)
 #-------------------------------------------------------------------------------
 
 if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
-  set(IREE_HOST_SCRIPT_EXT "bat")
+  set(COMPILER_GYM_HOST_SCRIPT_EXT "bat")
   # https://gitlab.kitware.com/cmake/cmake/-/issues/17553
-  set(IREE_HOST_EXECUTABLE_SUFFIX ".exe")
+  set(COMPILER_GYM_HOST_EXECUTABLE_SUFFIX ".exe")
 else()
-  set(IREE_HOST_SCRIPT_EXT "sh")
-  set(IREE_HOST_EXECUTABLE_SUFFIX "")
+  set(COMPILER_GYM_HOST_SCRIPT_EXT "sh")
+  set(COMPILER_GYM_HOST_EXECUTABLE_SUFFIX "")
 endif()
 
 #-------------------------------------------------------------------------------
@@ -51,32 +51,32 @@ endfunction()
 # Packages and Paths
 #-------------------------------------------------------------------------------
 
-# Sets ${PACKAGE_NS} to the IREE-root relative package name in C++ namespace
+# Sets ${PACKAGE_NS} to the root relative package name in C++ namespace
 # format (::).
 #
-# Example when called from iree/base/CMakeLists.txt:
-#   iree::base
+# Example when called from proj/base/CMakeLists.txt:
+#   proj::base
 function(cg_package_ns PACKAGE_NS)
-  string(REPLACE ${IREE_ROOT_DIR} "" _PACKAGE ${CMAKE_CURRENT_LIST_DIR})
+  string(REPLACE ${COMPILER_GYM_ROOT_DIR} "" _PACKAGE ${CMAKE_CURRENT_LIST_DIR})
   string(SUBSTRING ${_PACKAGE} 1 -1 _PACKAGE)
   string(REPLACE "/" "::" _PACKAGE_NS ${_PACKAGE})
   set(${PACKAGE_NS} ${_PACKAGE_NS} PARENT_SCOPE)
 endfunction()
 
-# Sets ${PACKAGE_NAME} to the IREE-root relative package name.
+# Sets ${PACKAGE_NAME} to the root relative package name.
 #
-# Example when called from iree/base/CMakeLists.txt:
-#   cg_base
+# Example when called from proj/base/CMakeLists.txt:
+#   proj__base
 function(cg_package_name PACKAGE_NAME)
   cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "__" _PACKAGE_NAME ${_PACKAGE_NS})
   set(${PACKAGE_NAME} ${_PACKAGE_NAME} PARENT_SCOPE)
 endfunction()
 
-# Sets ${PACKAGE_PATH} to the IREE-root relative package path.
+# Sets ${PACKAGE_PATH} to the root relative package path.
 #
-# Example when called from iree/base/CMakeLists.txt:
-#   iree/base
+# Example when called from proj/base/CMakeLists.txt:
+#   proj/base
 function(cg_package_path PACKAGE_PATH)
   cg_package_ns(_PACKAGE_NS)
   string(REPLACE "::" "/" _PACKAGE_PATH ${_PACKAGE_NS})
@@ -85,7 +85,7 @@ endfunction()
 
 # Sets ${PACKAGE_DIR} to the directory name of the current package.
 #
-# Example when called from iree/base/CMakeLists.txt:
+# Example when called from proj/base/CMakeLists.txt:
 #   base
 function(cg_package_dir PACKAGE_DIR)
   cg_package_ns(_PACKAGE_NS)
@@ -93,39 +93,6 @@ function(cg_package_dir PACKAGE_DIR)
   math(EXPR _END_OFFSET "${_END_OFFSET} + 2")
   string(SUBSTRING ${_PACKAGE_NS} ${_END_OFFSET} -1 _PACKAGE_DIR)
   set(${PACKAGE_DIR} ${_PACKAGE_DIR} PARENT_SCOPE)
-endfunction()
-
-# cg_get_executable_path
-#
-# Gets the path to an executable in a cross-compilation-aware way. This
-# should be used when accessing binaries that are used as part of the build,
-# such as for generating files used for later build steps.
-#
-# Paramters:
-# - OUTPUT_PATH_VAR: variable name for receiving the path to the built target.
-# - EXECUTABLE: the executable to get its path. Note that this needs to be the
-#     name of the executable target when not cross compiling and the basename of
-#     the binary when importing a binary from a host build. Thus this should be
-#     the global unqualified name of the binary, not the fully-specified name.
-function(cg_get_executable_path OUTPUT_PATH_VAR EXECUTABLE)
-  if (NOT DEFINED IREE_HOST_BINARY_ROOT OR TARGET "${EXECUTABLE}")
-    # We can either expect the target to be defined as part of this CMake
-    # invocation (if not cross compiling) or the target is defined already.
-    set(${OUTPUT_PATH_VAR} "$<TARGET_FILE:${EXECUTABLE}>" PARENT_SCOPE)
-  else()
-    # The target won't be directly defined by this CMake invocation so check
-    # for an already built executable at IREE_HOST_BINARY_ROOT. If we find it,
-    # add it as an imported target so it gets picked up on later invocations.
-    set(_EXECUTABLE_PATH "${IREE_HOST_BINARY_ROOT}/bin/${EXECUTABLE}${IREE_HOST_EXECUTABLE_SUFFIX}")
-    if (EXISTS ${_EXECUTABLE_PATH})
-      add_executable("${EXECUTABLE}" IMPORTED GLOBAL)
-      set_property(TARGET "${EXECUTABLE}" PROPERTY IMPORTED_LOCATION "${_EXECUTABLE_PATH}")
-      set(${OUTPUT_PATH_VAR} "$<TARGET_FILE:${EXECUTABLE}>" PARENT_SCOPE)
-    else()
-      message(FATAL_ERROR "Could not find '${EXECUTABLE}' at '${_EXECUTABLE_PATH}'. "
-              "Ensure that IREE_HOST_BINARY_ROOT points to installed binaries.")
-    endif()
-  endif()
 endfunction()
 
 function(canonize_bazel_target_names _RESULT _BAZEL_TARGETS)
@@ -143,7 +110,6 @@ function(canonize_bazel_target_names _RESULT _BAZEL_TARGETS)
 endfunction()
 
 function(rename_bazel_targets _RESULT _BAZEL_TARGETS)
-  # Replace dependencies passed by ::name with iree::package::name
   canonize_bazel_target_names(_RES "${_BAZEL_TARGETS}")
   list(TRANSFORM _RES REPLACE ":" "_")
   set(${_RESULT} ${_RES} PARENT_SCOPE)
@@ -219,7 +185,7 @@ endfunction()
 function(cg_select_compiler_opts OPTS)
   cmake_parse_arguments(
     PARSE_ARGV 1
-    _IREE_SELECTS
+    _COMPILER_GYM_SELECTS
     ""
     ""
     "ALL;CLANG;CLANG_CL;MSVC;GCC;CLANG_OR_GCC;MSVC_OR_CLANG_CL"
@@ -227,21 +193,21 @@ function(cg_select_compiler_opts OPTS)
   # OPTS is a variable containing the *name* of the variable being populated, so
   # we need to dereference it twice.
   set(_OPTS "${${OPTS}}")
-  list(APPEND _OPTS "${_IREE_SELECTS_ALL}")
+  list(APPEND _OPTS "${_COMPILER_GYM_SELECTS_ALL}")
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    list(APPEND _OPTS "${_IREE_SELECTS_GCC}")
-    list(APPEND _OPTS "${_IREE_SELECTS_CLANG_OR_GCC}")
+    list(APPEND _OPTS "${_COMPILER_GYM_SELECTS_GCC}")
+    list(APPEND _OPTS "${_COMPILER_GYM_SELECTS_CLANG_OR_GCC}")
   elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     if(MSVC)
-      list(APPEND _OPTS ${_IREE_SELECTS_CLANG_CL})
-      list(APPEND _OPTS ${_IREE_SELECTS_MSVC_OR_CLANG_CL})
+      list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_CLANG_CL})
+      list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_MSVC_OR_CLANG_CL})
     else()
-      list(APPEND _OPTS ${_IREE_SELECTS_CLANG})
-      list(APPEND _OPTS ${_IREE_SELECTS_CLANG_OR_GCC})
+      list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_CLANG})
+      list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_CLANG_OR_GCC})
     endif()
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    list(APPEND _OPTS ${_IREE_SELECTS_MSVC})
-    list(APPEND _OPTS ${_IREE_SELECTS_MSVC_OR_CLANG_CL})
+    list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_MSVC})
+    list(APPEND _OPTS ${_COMPILER_GYM_SELECTS_MSVC_OR_CLANG_CL})
   else()
     message(ERROR "Unknown compiler: ${CMAKE_CXX_COMPILER}")
     list(APPEND _OPTS "")
@@ -362,10 +328,8 @@ endfunction()
 #
 # Adds test environment variable properties based on the current build options.
 #
-# Parameters:
-# TEST_NAME: the test name, e.g. iree/base:math_test
 function(cg_add_test_environment_properties TEST_NAME)
-  # IREE_*_DISABLE environment variables may used to skip test cases which
+  # COMPILER_GYM_*_DISABLE environment variables may used to skip test cases which
   # require both a compiler target backend and compatible runtime HAL driver.
   #
   # These variables may be set by the test environment, typically as a property
@@ -374,11 +338,11 @@ function(cg_add_test_environment_properties TEST_NAME)
   #
   # Tests which only depend on a compiler target backend or a runtime HAL
   # driver, but not both, should generally use a different method of filtering.
-  if(NOT "${IREE_TARGET_BACKEND_VULKAN-SPIRV}" OR NOT "${IREE_HAL_DRIVER_VULKAN}")
-    set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT "IREE_VULKAN_DISABLE=1")
+  if(NOT "${COMPILER_GYM_TARGET_BACKEND_VULKAN-SPIRV}" OR NOT "${COMPILER_GYM_HAL_DRIVER_VULKAN}")
+    set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT "COMPILER_GYM_VULKAN_DISABLE=1")
   endif()
-  if(NOT "${IREE_TARGET_BACKEND_DYLIB-LLVM-AOT}" OR NOT "${IREE_HAL_DRIVER_DYLIB}"
-     OR NOT "${IREE_HAL_DRIVER_DYLIB_SYNC}")
-    set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT "IREE_LLVMAOT_DISABLE=1")
+  if(NOT "${COMPILER_GYM_TARGET_BACKEND_DYLIB-LLVM-AOT}" OR NOT "${COMPILER_GYM_HAL_DRIVER_DYLIB}"
+     OR NOT "${COMPILER_GYM_HAL_DRIVER_DYLIB_SYNC}")
+    set_property(TEST ${TEST_NAME} APPEND PROPERTY ENVIRONMENT "COMPILER_GYM_LLVMAOT_DISABLE=1")
   endif()
 endfunction()

@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #-------------------------------------------------------------------------------
-# C/C++ options as used within IREE
+# C/C++ options as used within Compiler Gym
 #-------------------------------------------------------------------------------
 #
 #         ██     ██  █████  ██████  ███    ██ ██ ███    ██  ██████
@@ -34,43 +34,17 @@
 #   flags may be required there.
 #
 #   See: https://en.wikipedia.org/wiki/Auto-linking
-#
-# - Need to tweak a compilation mode setting (debug/asserts/etc)?
-#   Don't do that here, and in general *don't do that at all* unless it's behind
-#   a very specific IREE-prefixed cmake flag (like IREE_SIZE_OPTIMIZED).
-#   There's no one-size solution when we are dealing with cross-project and
-#   cross-compiled binaries - there's no safe way to set global options that
-#   won't cause someone to break, and you probably don't really need to do
-#   change that setting anyway. Follow the rule of least surprise: if the user
-#   has CMake's Debug configuration active then don't force things into release
-#   mode, etc.
-#
-# - Need to add an include directory?
-#   Don't do that here. Always prefer to fully-specify the path from the IREE
-#   workspace root when it's known that the compilation will be occuring using
-#   the files within the IREE checkout; for example, instead of adding a global
-#   include path to third_party/foo/ and #include <foo.h>'ing, just
-#   #include "third_party/foo/foo.h". This reduces build configuration, makes it
-#   easier for readers to find the files, etc.
-#
-# - Still think you need to add an include directory? (system includes, etc)
-#   Don't do that here, either. It's highly doubtful that every single target in
-#   all of IREE (both compiler and runtime) on all platforms (both host and
-#   cross-compilation targets) needs your special include directory. Add it on
-#   the COPTS of the target you are using it in and, ideally, private to that
-#   target (used in .c/cc files, not in a .h that leaks the include path
-#   requirements to all consumers of the API).
 
-set(IREE_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+
+set(COMPILER_GYM_CXX_STANDARD ${CMAKE_CXX_STANDARD})
 
 # TODO(benvanik): fix these names (or remove entirely).
-set(IREE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(IREE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(IREE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(COMPILER_GYM_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(COMPILER_GYM_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(COMPILER_GYM_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 # Compiler diagnostics.
-# Please keep these in sync with build_tools/bazel/iree.bazelrc
-cg_select_compiler_opts(IREE_DEFAULT_COPTS
+cg_select_compiler_opts(COMPILER_GYM_DEFAULT_COPTS
   # Clang diagnostics. These largely match the set of warnings used within
   # Google. They have not been audited super carefully by the IREE team but are
   # generally thought to be a good set and consistency with those used

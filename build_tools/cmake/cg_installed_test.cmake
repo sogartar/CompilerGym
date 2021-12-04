@@ -61,11 +61,11 @@ function(cg_add_installed_test)
   # Write the to the installed ctest file template.
   set(_installed_ctest_input_file
         "${CMAKE_BINARY_DIR}/cg_installed_tests.cmake.in")
-  get_property(_has_tests GLOBAL PROPERTY IREE_HAS_INSTALLED_TESTS)
+  get_property(_has_tests GLOBAL PROPERTY COMPILER_GYM_HAS_INSTALLED_TESTS)
   if(NOT _has_tests)
     # First time.
     file(WRITE "${_installed_ctest_input_file}")  # Truncate.
-    set_property(GLOBAL PROPERTY IREE_HAS_INSTALLED_TESTS ON)
+    set_property(GLOBAL PROPERTY COMPILER_GYM_HAS_INSTALLED_TESTS ON)
   endif()
 
   # Now write directives to the installed tests cmake file.

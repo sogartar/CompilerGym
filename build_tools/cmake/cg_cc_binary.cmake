@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_binary.cmake[
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/iree_cc_binary.cmake[
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -45,7 +45,7 @@ include(CMakeParseArguments)
 #   SRCS
 #     "awesome-tool-main.cc"
 #   DEPS
-#     iree::awesome
+#     compiler_gym::awesome
 # )
 function(cg_cc_binary)
   cmake_parse_arguments(
@@ -65,9 +65,6 @@ function(cg_cc_binary)
   rename_bazel_targets(_NAME "${_RULE_NAME}")
 
   add_executable(${_NAME} "")
-  # Alias the cmake_package_name binary to iree::package::name.
-  # This lets us more clearly map to Bazel and makes it possible to
-  # disambiguate the underscores in paths vs. the separators.
   add_executable(${_PACKAGE_NS}::${_RULE_NAME} ALIAS ${_NAME})
 
   # If the binary name matches the package then treat it as a default. For
@@ -101,8 +98,8 @@ function(cg_cc_binary)
   endif()
   target_include_directories(${_NAME} SYSTEM
     PUBLIC
-      "$<BUILD_INTERFACE:${IREE_SOURCE_DIR}>"
-      "$<BUILD_INTERFACE:${IREE_BINARY_DIR}>"
+      "$<BUILD_INTERFACE:${COMPILER_GYM_SOURCE_DIR}>"
+      "$<BUILD_INTERFACE:${COMPILER_GYM_BINARY_DIR}>"
   )
   target_include_directories(${_NAME}
     PUBLIC
@@ -114,12 +111,12 @@ function(cg_cc_binary)
   )
   target_compile_options(${_NAME}
     PRIVATE
-      ${IREE_DEFAULT_COPTS}
+      ${COMPILER_GYM_DEFAULT_COPTS}
       ${_RULE_COPTS}
   )
   target_link_options(${_NAME}
     PRIVATE
-      ${IREE_DEFAULT_LINKOPTS}
+      ${COMPILER_GYM_DEFAULT_LINKOPTS}
       ${_RULE_LINKOPTS}
   )
 
@@ -133,10 +130,10 @@ function(cg_cc_binary)
 
   cg_add_data_dependencies(NAME ${_RULE_NAME} DATA ${_RULE_DATA})
 
-  # Add all IREE targets to a folder in the IDE for organization.
+  # Add all targets to a folder in the IDE for organization.
   set_target_properties(${_NAME} PROPERTIES
-    FOLDER ${IREE_IDE_FOLDER}/binaries
-    CXX_STANDARD ${IREE_CXX_STANDARD}
+    FOLDER ${COMPILER_GYM_IDE_FOLDER}/binaries
+    CXX_STANDARD ${COMPILER_GYM_CXX_STANDARD}
     CXX_STANDARD_REQUIRED ON)
 
   install(TARGETS ${_NAME}

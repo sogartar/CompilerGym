@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_test.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/iree_cc_test.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -46,7 +46,7 @@ include(cg_installed_test)
 #     "awesome_test.cc"
 #   DEPS
 #     gtest_main
-#     iree::awesome
+#     compiler_gym::awesome
 # )
 function(cg_cc_test)
   if(NOT COMPILER_GYM_BUILD_TESTS)
@@ -76,7 +76,7 @@ function(cg_cc_test)
     COMMAND
       # We run all our tests through a custom test runner to allow temp
       # directory cleanup upon test completion.
-      "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
+      "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${COMPILER_GYM_HOST_SCRIPT_EXT}"
       "$<TARGET_FILE:${_NAME}>"
     INSTALLED_COMMAND
       # Must match install destination below.

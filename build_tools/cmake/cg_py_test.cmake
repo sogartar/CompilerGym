@@ -1,4 +1,4 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_cc_test.cmake
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/iree_cc_test.cmake
 # Copyright 2019 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
@@ -58,7 +58,7 @@ function(cg_py_test)
     ENVIRONMENT
       "PYTHONPATH=${CMAKE_BINARY_DIR}:$ENV{PYTHONPATH}"
     COMMAND
-      "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
+      "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${COMPILER_GYM_HOST_SCRIPT_EXT}"
       "${Python3_EXECUTABLE}"
       "${CMAKE_CURRENT_BINARY_DIR}/${_RULE_SRCS}"
       ${_RULE_ARGS}

@@ -128,7 +128,6 @@ function(cg_pyext_module)
     ${ARGN})
 
   cg_package_ns(_PACKAGE_NS)
-  # Replace dependencies passed by ::name with ::iree::package::name
   list(TRANSFORM ARG_DEPS REPLACE "^::" "${_PACKAGE_NS}::")
   list(TRANSFORM ARG_PYEXT_DEPS REPLACE "^::" "${_PACKAGE_NS}::")
   # Prefix the library with the package name, so we get: cg_package_name.
@@ -139,7 +138,7 @@ function(cg_pyext_module)
     ${ARG_SRCS}
   )
 
-  # Alias the cg_package_name library to iree::package::name so that we can
+  # Alias the library so that we can
   # refer to this target with the namespaced format.
   add_library(${_PACKAGE_NS}::${ARG_NAME} ALIAS ${_NAME})
 
@@ -189,7 +188,7 @@ function(cg_pyext_module)
   target_compile_options(
     ${_NAME} PRIVATE
     ${ARG_COPTS}
-    ${IREE_DEFAULT_COPTS}
+    ${COMPILER_GYM_DEFAULT_COPTS}
     ${_RTTI_AND_EXCEPTION_COPTS}
   )
 

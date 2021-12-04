@@ -1,4 +1,5 @@
-# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/cg_add_all_subdirs.cmake
+# ===
+# Copied from https://github.com/google/iree/blob/main/build_tools/cmake/iree_add_all_subdirs.cmake
 # Copyright 2020 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.

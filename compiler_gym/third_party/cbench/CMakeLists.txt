@@ -10,7 +10,7 @@ cg_genrule(
 
 cg_filegroup(
   NAME cbench
-  SRCS
+  DEPENDS
     ::adpcm
     ::bitcount
     ::blowfish
@@ -95,7 +95,7 @@ set(CBENCH_MODULES
   tiff2bw
   tiff2rgba
   tiffdither
-  consumer_tiffmedian)
+  tiffmedian)
 set(CBENCH_MODULE_DIRS
   "${cBench_SRC_DIR}/telecom_CRC32"
   "${ctuning_ai_SRC_DIR}/program/cbench-consumer-jpeg-c"

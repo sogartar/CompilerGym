@@ -15,22 +15,21 @@ function(cg_filegroup)
       get_filename_component(_FILE_NAME ${FILE_} NAME)
       canonize_bazel_target_names(_FILE_TARGET "${_FILE_NAME}")
       rename_bazel_targets(_TARGET "${_FILE_TARGET}")
-      string(REPLACE "::" "/" _FILE_PATH ${_FILE_TARGET})
-      set(_OUTPUT_PATH "${PROJECT_BINARY_DIR}/${_FILE_PATH}")
+      set(_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/${_FILE_NAME}")
     else()
       canonize_bazel_target_names(_FILE_TARGET "${FILE_}")
       rename_bazel_targets(_TARGET "${_FILE_TARGET}")
-      string(REPLACE "::" "/" _FILE_PATH ${_FILE_TARGET})
-      set(_INPUT_PATH "${PROJECT_SOURCE_DIR}/${_FILE_PATH}")
-      set(_OUTPUT_PATH "${PROJECT_BINARY_DIR}/${_FILE_PATH}")
+      set(_INPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${FILE_}")
+      set(_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/${FILE_}")
     endif()
 
     if(NOT TARGET ${_TARGET})
-#      add_custom_command(OUTPUT "${_OUTPUT_PATH}"
-#        COMMAND ${CMAKE_COMMAND} -E copy "${_INPUT_PATH}" "${_OUTPUT_PATH}"
-#        DEPENDS "${_INPUT_PATH}")
-#      add_custom_target(${_TARGET} DEPENDS "${_OUTPUT_PATH}")
-      add_custom_target(${_TARGET} DEPENDS "${_INPUT_PATH}")
+      if (NOT _INPUT_PATH STREQUAL _OUTPUT_PATH)
+        add_custom_command(OUTPUT "${_OUTPUT_PATH}"
+          COMMAND ${CMAKE_COMMAND} -E create_symlink "${_INPUT_PATH}" "${_OUTPUT_PATH}"
+          DEPENDS "${_INPUT_PATH}")
+      endif()
+      add_custom_target(${_TARGET} DEPENDS "${_OUTPUT_PATH}")
     endif()
 
     add_dependencies(${_NAME} ${_TARGET})

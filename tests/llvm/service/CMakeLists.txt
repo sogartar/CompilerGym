@@ -23,5 +23,6 @@ cg_cc_test(
     GTest::GTest
     magic_enum
 )
+#message(FATAL_ERROR)
 
 ### BAZEL_TO_CMAKE_PRESERVES_ALL_CONTENT_BELOW_THIS_LINE ###

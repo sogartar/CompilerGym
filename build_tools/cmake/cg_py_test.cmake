@@ -60,7 +60,7 @@ function(cg_py_test)
     COMMAND
       "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${IREE_HOST_SCRIPT_EXT}"
       "${Python3_EXECUTABLE}"
-      "${CMAKE_BINARY_DIR}/${_RULE_SRCS}"
+      "${CMAKE_CURRENT_BINARY_DIR}/${_RULE_SRCS}"
       ${_RULE_ARGS}
     INSTALLED_COMMAND
       python

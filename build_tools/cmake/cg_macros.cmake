@@ -182,6 +182,19 @@ function(make_paths_absolute)
   set(${_ARG_RESULT_VARIABLE} "${_RES}" PARENT_SCOPE)
 endfunction()
 
+function(paths_to_targets)
+  cmake_parse_arguments(
+    _ARG
+    ""
+    "RESULT"
+    "PATHS"
+    ${ARGN}
+  )
+
+  string(REGEX REPLACE "[^A-Za-z0-9_+-]" "_" _TARGETS "${_ARG_PATHS}")
+  set(${_ARG_RESULT} "${TARGETS}" PARENT_SCOPE)
+endfunction()
+
 #-------------------------------------------------------------------------------
 # select()-like Evaluation
 #-------------------------------------------------------------------------------
@@ -266,7 +279,7 @@ function(cg_add_data_dependencies)
   foreach(_DATA ${_RULE_DATA})
     if(IS_ABSOLUTE "${_DATA}")
       get_filename_component(FILE_ "${_DATA}" ABSOLUTE)
-      string(REPLACE "/" "_" _TARGET "${FILE_}")
+      paths_to_targets(PATHS "${FILE_}" RESULT _TARGET)
       string(PREPEND _TARGET "${_NAME}_data_")
       get_filename_component(_FILE_NAME "${FILE_}" NAME)
       set(_DST_DIR "${CMAKE_CURRENT_BINARY_DIR}")

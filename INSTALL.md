@@ -127,6 +127,7 @@ source compiler_gym_venv/bin/activate
 ```
 
 ```
+pip install --upgrade pip
 # in the source directory
 python -m pip install -r requirements.txt
 ```

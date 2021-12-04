@@ -21,6 +21,8 @@ list(APPEND CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_LIST_DIR}/build_tools/cmake/
 )
 
+set(COMPILER_GYM_BUILD_TESTS OFF CACHE BOOL "Enable Compiler Gym tests.")
+
 include(cg_macros)
 include(cg_copts)
 include(cg_genrule)
@@ -55,4 +57,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 include(external/external.cmake)
 add_subdirectory(compiler_gym)
-add_subdirectory(tests)
+if(COMPILER_GYM_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()

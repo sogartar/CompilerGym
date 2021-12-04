@@ -31,5 +31,7 @@ runs:
                   sudo apt update && sudo apt install bazel-4.0.0
                   # protobuf
                   sudo apt-get install autoconf libtool make
+                  # Testing
+                  sudo apt-get install coreutils
               fi
           shell: bash

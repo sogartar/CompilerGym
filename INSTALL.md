@@ -184,3 +184,5 @@ cmake -GNinja \
 
 cmake  --build "$BUILD_DIR"
 ```
+
+To enable testing add `-DCOMPILER_GYM_BUILD_TESTS=ON` as an argument to the configuration step.

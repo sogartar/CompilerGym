@@ -72,8 +72,7 @@ string(CONCAT _CMD
     "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__make_specs,LOCATION>\" "
     "\"$<TARGET_FILE:compiler_gym__envs__llvm__service__compiler_gym-llvm-service>\" "
     "\"$@\"")
-set_command_pythonpath(COMMAND "${_CMD}" RESULT_VAR _CMD)
-
+set_command_pythonpath(COMMAND "${_CMD}" RESULT _CMD)
 cg_genrule(
   NAME specs
   OUTS "specs.py"

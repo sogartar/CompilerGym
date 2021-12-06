@@ -118,10 +118,13 @@ set(CBENCH_MODULE_DIRS
   "${cBench_SRC_DIR}/consumer_tiffmedian")
 foreach(MODULE_ DIR_ IN ZIP_LISTS CBENCH_MODULES CBENCH_MODULE_DIRS)
   file(GLOB_RECURSE MODULE_FILES LIST_DIRECTORIES true "${DIR_}/*")
-  string(CONCAT _CMD
-    "mkdir -p \"$(@D)\" && "
+  string(CONCAT _CMD_PY
     "\"${Python3_EXECUTABLE}\" "
       "\"${CMAKE_CURRENT_BINARY_DIR}/make_llvm_module.py\" \"${DIR_}\" \"$@\"")
+  set_command_pythonpath(COMMAND "${_CMD_PY}" RESULT _CMD_PY)
+  string(CONCAT _CMD
+    "mkdir -p \"$(@D)\" && "
+    "${_CMD_PY}")
   cg_genrule(
     NAME ${MODULE_}
     SRCS
@@ -140,9 +143,12 @@ string(CONCAT _CMD
   "mkdir -p \"$(@D)\" && "
   "rsync -rL \"${cBench_SRC_DIR}/office_ghostscript/\" \"$(@D)/office_ghostscript_src/\" && "
   "patch --quiet --forward \"$(@D)/office_ghostscript_src/src/idebug.c\" < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-ghostscript-idebug.c.patch\" && "
-  "patch --quiet --forward \"$(@D)/office_ghostscript_src/src/std.h\" < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-ghostscript-std.h.patch\" && "
+  "patch --quiet --forward \"$(@D)/office_ghostscript_src/src/std.h\" < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-ghostscript-std.h.patch\" && ")
+string(CONCAT _CMD_PY
   "\"${Python3_EXECUTABLE}\" "
     "\"${CMAKE_CURRENT_BINARY_DIR}/make_llvm_module.py\" \"$(@D)/office_ghostscript_src\" \"$@\"")
+set_command_pythonpath(COMMAND "${_CMD_PY}" RESULT _CMD_PY)
+string(CONCAT _CMD "${_CMD}" "${_CMD_PY}")
 cg_genrule(
   NAME ghostscript
   SRCS
@@ -162,10 +168,13 @@ string(CONCAT _CMD
   "mkdir -p \"$(@D)\" && "
   "rsync -rL \"${cBench_SRC_DIR}/telecom_gsm/\" \"$(@D)/telecom_gsm_src/\" && "
   "patch --quiet --forward \"$(@D)/telecom_gsm_src/src/add.c\""
-    " < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-gsm-add.c.patch\" && "
+    " < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-gsm-add.c.patch\" && ")
+string(CONCAT _CMD_PY
   "\"${Python3_EXECUTABLE}\" "
     "\"${CMAKE_CURRENT_BINARY_DIR}/make_llvm_module.py\" \"$(@D)/telecom_gsm_src\" \"$@\" "
     "-DSASR -DSTUPID_COMPILER -DNeedFunctionPrototypes=1")
+set_command_pythonpath(COMMAND "${_CMD_PY}" RESULT _CMD_PY)
+string(CONCAT _CMD "${_CMD}" "${_CMD_PY}")
 cg_genrule(
   NAME gsm
   SRCS
@@ -183,9 +192,12 @@ file(GLOB_RECURSE office_ispell_FILES LIST_DIRECTORIES true
 string(CONCAT _CMD
   "mkdir -p \"$(@D)\" && "
   "rsync -rL \"${cBench_SRC_DIR}/office_ispell/\" \"$(@D)/office_ispell_src/\" && "
-  "patch --quiet --forward \"$(@D)/office_ispell_src/src/correct.c\" < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-ispell-correct.c.patch\" && "
+  "patch --quiet --forward \"$(@D)/office_ispell_src/src/correct.c\" < \"${CMAKE_CURRENT_SOURCE_DIR}/cBench-ispell-correct.c.patch\" && ")
+string(CONCAT _CMD_PY
   "\"${Python3_EXECUTABLE}\" "
     "\"${CMAKE_CURRENT_BINARY_DIR}/make_llvm_module.py\" \"$(@D)/office_ispell_src\" \"$@\"")
+set_command_pythonpath(COMMAND "${_CMD_PY}" RESULT _CMD_PY)
+string(CONCAT _CMD "${_CMD}" "${_CMD_PY}")
 cg_genrule(
   NAME ispell
   SRCS
@@ -201,10 +213,13 @@ cg_genrule(
 file(GLOB_RECURSE consumer_lame_FILES LIST_DIRECTORIES true
   "${cBench_SRC_DIR}/consumer_lame/*")
 string(CONCAT _CMD
-  "mkdir -p \"$(@D)\" && "
+  "mkdir -p \"$(@D)\" && ")
+string(CONCAT _CMD_PY
   "\"${Python3_EXECUTABLE}\" "
     "\"${CMAKE_CURRENT_BINARY_DIR}/make_llvm_module.py\" "
     "\"${cBench_SRC_DIR}/consumer_lame\" \"$@\" -DLAMESNDFILE -DHAVEMPGLIB -DLAMEPARSE")
+set_command_pythonpath(COMMAND "${_CMD_PY}" RESULT _CMD_PY)
+string(CONCAT _CMD "${_CMD}" "${_CMD_PY}")
 cg_genrule(
   NAME lame
   SRCS

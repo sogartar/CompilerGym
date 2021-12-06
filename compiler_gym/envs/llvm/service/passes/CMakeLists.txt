@@ -4,6 +4,7 @@ string(CONCAT _CMD
   "\"${Python3_EXECUTABLE}\" "
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__extract_passes_from_llvm_source_tree,LOCATION>\""
   " \"${LLVM_SRC_DIR}/llvm\" > $@")
+set_command_pythonpath(COMMAND "${_CMD}" RESULT _CMD)
 cg_genrule(
   NAME passes_list
   OUTS "passes_list.csv"
@@ -16,6 +17,7 @@ string(CONCAT _CMD
   "\"${Python3_EXECUTABLE}\" "
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__filter_action_space,LOCATION>\" < "
   " \"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__passes_list,LOCATION>\" > $@")
+set_command_pythonpath(COMMAND "${_CMD}" RESULT _CMD)
 cg_genrule(
   NAME actions_csv
   OUTS "actions.csv"
@@ -78,6 +80,7 @@ string(CONCAT _CMD
   "\"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__make_action_space_genfiles,LOCATION>\""
   " $(@D) < \"$<TARGET_PROPERTY:compiler_gym__envs__llvm__service__passes__actions_csv,LOCATION>\""
 )
+set_command_pythonpath(COMMAND "${_CMD}" RESULT _CMD)
 cg_genrule(
   NAME actions_genfiles
   OUTS

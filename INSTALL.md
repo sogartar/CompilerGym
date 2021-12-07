@@ -92,71 +92,43 @@ environment using:
 
 ### Dependency instructions for Ubuntu
 
-#### CMake
+```bash
+sudo apt-get install clang-9 clang++-9 lld-9 patchelf tar bzip2 \
+  autoconf libtool make ninja-build ccache \
+  python3 python3-pip python3-venv \
+  apt-transport-https curl gnupg wget \
+```
+
 Requires CMake (==3.20).
-```
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-sudo apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-sudo apt update
-sudo apt install kitware-archive-keyring
-sudo rm /etc/apt/trusted.gpg.d/kitware.gpg
-sudo apt update
-sudo apt install cmake=3.20\* cmake-data=3.20\*
-```
 
-#### Compiler
-
-```
-sudo apt-get install clang-9 clang++-9 lld-9 patchelf tar bzip2
-```
-
-#### Ninja
-```
-sudo apt-get install ninja-build
-```
-
-#### Python
-```
-sudo apt-get install python3 python3-pip python3-venv
+```bash
+wget https://github.com/Kitware/CMake/releases/download/v3.20.5/cmake-3.20.5-linux-x86_64.sh -O cmake.sh
+bash cmake.sh --prefix=$HOME/.local --exclude-subdir --skip-license
+rm cmake.sh
 ```
 
 Setup a virtual environment.
-```
+
+```bash
 python3 -m venv compiler_gym_venv
 source compiler_gym_venv/bin/activate
-```
-
-```
 pip install --upgrade pip
 # in the source directory
 python -m pip install -r requirements.txt
 ```
 
-#### programl
 To build programl internally it requires Bazel.
+
 ```
-sudo apt install apt-transport-https curl gnupg
 curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
 sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
 echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
 sudo apt update && sudo apt install bazel-4.0.0
 ```
 
-#### protobuf
-To build protobuf internally:
-```
-sudo apt-get install autoconf libtool make
-```
-
-### Build speed optimization
-
-```
-# For faster rebuilds
-sudo apt-get install ccacke
-```
-
 ### Dependency Arguments
 By default most dependencies are built together with Compiler Gym. To search for a dependency instead use:
+
 ```
 -DCOMPILER_GYM_<dependency>_PROVIDER=external
 ```
@@ -169,7 +141,7 @@ By default most dependencies are built together with Compiler Gym. To search for
 * `COMPILER_GYM_NLOHMANN_JSON_PROVIDER`
 * `COMPILER_GYM_PROTOBUF_PROVIDER`
 
-```
+```bash
 export SOURCE_DIR=<path to source directory>
 export BOULD_DIR=<path to build directory>
 
@@ -184,5 +156,25 @@ cmake -GNinja \
 
 cmake  --build "$BUILD_DIR"
 ```
+Additional optional configuration arguments:
 
-To enable testing add `-DCOMPILER_GYM_BUILD_TESTS=ON` as an argument to the configuration step.
+* Enables testing.
+
+    ```bash
+    -DCOMPILER_GYM_BUILD_TESTS=ON
+    ```
+
+* For faster linking.
+
+    ```bash
+    -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld"
+    -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld"
+    -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld"
+    ```
+
+* For faster rebuilds.
+
+    ```bash
+    -DCMAKE_C_COMPILER_LAUNCHER=ccache
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    ```

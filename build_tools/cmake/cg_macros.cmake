@@ -158,7 +158,7 @@ function(paths_to_targets)
   )
 
   string(REGEX REPLACE "[^A-Za-z0-9_+-]" "_" _TARGETS "${_ARG_PATHS}")
-  set(${_ARG_RESULT} "${TARGETS}" PARENT_SCOPE)
+  set(${_ARG_RESULT} "${_TARGETS}" PARENT_SCOPE)
 endfunction()
 
 #-------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ function(cg_add_data_dependencies)
           VERBATIM
         )
       endif()
-      add_custom_target(${_TARGET} DEPENDS "${FILE_}")
+      add_custom_target(${_TARGET} DEPENDS "${_DST_PATH}")
     else()
       rename_bazel_targets(_TARGET "${_DATA}")
     endif()

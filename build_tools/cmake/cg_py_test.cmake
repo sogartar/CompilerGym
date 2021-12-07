@@ -57,6 +57,8 @@ function(cg_py_test)
     LABELS "${_LABELS}"
     ENVIRONMENT
       "PYTHONPATH=${CMAKE_BINARY_DIR}:$ENV{PYTHONPATH}"
+      "TEST_WORKSPACE=compiler_gym"
+      #"COMPILER_GYM_RUNFILES=${CMAKE_CURRENT_BINARY_DIR}"
     COMMAND
       "${CMAKE_SOURCE_DIR}/build_tools/cmake/run_test.${COMPILER_GYM_HOST_SCRIPT_EXT}"
       "${Python3_EXECUTABLE}"

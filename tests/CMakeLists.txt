@@ -97,15 +97,25 @@ cg_py_test(
     compiler_gym::compiler_gym
 )
 
+string(CONCAT _CMD
+  "\"${CMAKE_COMMAND}\" -E create_symlink"
+    " \"${CMAKE_CURRENT_SOURCE_DIR}/../VERSION\""
+    " \"${CMAKE_CURRENT_BINARY_DIR}/../VERSION\"")
+cg_genrule(
+  NAME version_file
+  SRCS "${CMAKE_CURRENT_SOURCE_DIR}/../VERSION"
+  OUTS "${CMAKE_CURRENT_BINARY_DIR}/../VERSION"
+  COMMAND "${_CMD}"
+)
+
 cg_py_test(
   NAME
     version_test
   SRCS
     "version_test.py"
-  DATA
-    "${CMAKE_CURRENT_SOURCE_DIR}/../VERSION"
   DEPS
     ::test_main
+    ::version_file
     compiler_gym::compiler_gym
     tests::pytest_plugins::common
 )

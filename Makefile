@@ -197,7 +197,7 @@ bazel-build: bazel-fetch
 	$(BAZEL) $(BAZEL_OPTS) build $(BAZEL_BUILD_OPTS) $(BUILD_TARGET)
 
 bdist_wheel: bazel-build
-	$(PYTHON) setup.py bdist_wheel
+	$(PYTHON) setup.py bdist_wheel --package-dir bazel-bin/package.runfiles/CompilerGym
 
 bdist_wheel-linux-rename:
 	mv dist/compiler_gym-$(VERSION)-py3-none-linux_x86_64.whl dist/compiler_gym-$(VERSION)-py3-none-manylinux2014_x86_64.whl
@@ -367,7 +367,7 @@ post-install-test:
 # CompilerGym versions co-existing in the same Python environment.
 
 pip-install: uninstall
-	$(PYTHON) setup.py install
+	$(PYTHON) setup.py install --package-dir bazel-bin/package.runfiles/CompilerGym
 
 install: |  init-runtime-requirements bazel-build pip-install
 

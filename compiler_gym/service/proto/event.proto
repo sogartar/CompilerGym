@@ -1,0 +1,51 @@
+// The CompilerGym service interface description.
+//
+// Copyright (c) Facebook, Inc. and its affiliates.
+//
+// This source code is licensed under the MIT license found in the
+// LICENSE file in the root directory of this source tree.
+
+syntax = "proto3";
+
+package compiler_gym;
+
+option cc_enable_arenas = true;
+option go_package = "compiler_gympb";
+option java_multiple_files = true;
+option java_outer_classname = "EventProto";
+option java_package = "com.compiler_gym";
+
+import "basic.proto";
+import "google/protobuf/any.proto";
+
+message EventTuple {
+  repeated Event tuple = 1;
+}
+
+message EventDict {
+  map<string, Event> dict = 3;
+}
+
+// Common structure shared between Action and Observation.
+// TODO(boian): Maybe rename to Effect
+message Event {
+  string name = 1;
+  oneof value {
+    EventTuple tuple = 2;
+    EventDict dict = 3;
+    bool boolean_value = 4;
+    int32 int32_value = 5;
+    int64 int64_value = 6;
+    float float_value = 7;
+    double double_value = 8;
+    string string_value = 9;
+    BooleanTensor boolean_tensor = 10;
+    ByteTensor byte_tensor = 11;
+    Int32Tensor int32_tensor = 12;
+    Int64Tensor int64_tensor = 13;
+    FloatTensor float_tensor = 14;
+    DoubleTensor double_tensor = 15;
+    StringTensor string_tensor = 16;
+    google.protobuf.Any custom_value = 17;
+  }
+}

@@ -1,0 +1,58 @@
+// The CompilerGym service interface description.
+//
+// Copyright (c) Facebook, Inc. and its affiliates.
+//
+// This source code is licensed under the MIT license found in the
+// LICENSE file in the root directory of this source tree.
+
+syntax = "proto3";
+
+package compiler_gym;
+
+option cc_enable_arenas = true;
+option go_package = "compiler_gympb";
+option java_multiple_files = true;
+option java_outer_classname = "BasicProto";
+option java_package = "com.compiler_gym";
+
+message BooleanTensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated bool value = 2;
+}
+
+message ByteTensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  bytes value = 2;
+}
+
+message Int32Tensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated int32 value = 2;
+}
+
+message Int64Tensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated int64 value = 2;
+}
+
+message FloatTensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated float value = 2;
+}
+
+message DoubleTensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated double value = 2;
+}
+
+message StringTensor {
+  repeated int64 shape = 1;
+  // Flattened tensor of shape `shape` with C-like index order.
+  repeated string value = 2;
+}

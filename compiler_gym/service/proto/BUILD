@@ -31,6 +31,7 @@ proto_library(
     name = "compiler_gym_service",
     srcs = ["compiler_gym_service.proto"],
     visibility = ["//visibility:public"],
+    deps = ["@com_google_protobuf//:any_proto"],
 )
 
 py_proto_library(

@@ -28,12 +28,12 @@ from compiler_gym.service import (
     ServiceTransportError,
     SessionNotFound,
 )
-from compiler_gym.service.proto import Action, AddBenchmarkRequest
+from compiler_gym.service.proto import AddBenchmarkRequest
 from compiler_gym.service.proto import Benchmark as BenchmarkProto
+from compiler_gym.service.proto import EndSessionReply, EndSessionRequest
+from compiler_gym.service.proto import Event as Action
+from compiler_gym.service.proto import Event as Choice
 from compiler_gym.service.proto import (
-    Choice,
-    EndSessionReply,
-    EndSessionRequest,
     ForkSessionReply,
     ForkSessionRequest,
     GetVersionReply,

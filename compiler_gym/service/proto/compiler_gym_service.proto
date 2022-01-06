@@ -236,12 +236,17 @@ message DiscreteSpace {
 message NamedDiscreteSpace {
   // A list of names for every value in the space. The order in which these
   // values are returned is used.
-  repeated string items = 1;
+  repeated string names = 1;
 }
 
 message BooleanSequenceSpace {
   Int64Range length_range = 1;
   BooleanRange scalar_range = 2;
+}
+
+message ByteSequenceSpace {
+  Int64Range length_range = 1;
+  Int64Range scalar_range = 2;
 }
 
 message BytesSequenceSpace {
@@ -286,17 +291,18 @@ message Space {
     DoubleRange double_value = 9;
     StringSpace string_value = 10;
     BooleanSequenceSpace boolean_sequence = 11;
-    BytesSequenceSpace bytes_sequence = 12;
-    Int64SequenceSpace int64_sequence = 13;
-    FloatSequenceSpace float_sequence = 14;
-    DoubleSequenceSpace double_sequence = 15;
-    StringSequenceSpace string_sequence = 16;
-    BooleanBox boolean_box = 17;
-    ByteBox bytes_box = 18;
-    Int64Box int64_box = 19;
-    FloatBox float_box = 20;
-    DoubleBox double_box = 21;
-    google.protobuf.Any any_value = 22;
+    ByteSequenceSpace byte_sequence = 13;
+    BytesSequenceSpace bytes_sequence = 14;
+    Int64SequenceSpace int64_sequence = 15;
+    FloatSequenceSpace float_sequence = 16;
+    DoubleSequenceSpace double_sequence = 17;
+    StringSequenceSpace string_sequence = 18;
+    BooleanBox boolean_box = 19;
+    ByteBox bytes_box = 20;
+    Int64Box int64_box = 21;
+    FloatBox float_box = 22;
+    DoubleBox double_box = 23;
+    google.protobuf.Any any_value = 24;
   }
 }
 
@@ -335,14 +341,15 @@ message Event {
     float float_value = 5;
     double double_value = 6;
     string string_value = 7;
+    bytes bytes_value = 8;
     // Fixed and variable length sequences are represented as one-dimensional tensor.
-    BooleanTensor boolean_tensor = 8;
-    ByteTensor byte_tensor = 9;
-    Int64Tensor int64_tensor = 10;
-    FloatTensor float_tensor = 11;
-    DoubleTensor double_tensor = 12;
-    StringTensor string_tensor = 13;
-    google.protobuf.Any any_value = 14;
+    BooleanTensor boolean_tensor = 9;
+    ByteTensor byte_tensor = 10;
+    Int64Tensor int64_tensor = 11;
+    FloatTensor float_tensor = 12;
+    DoubleTensor double_tensor = 13;
+    StringTensor string_tensor = 14;
+    google.protobuf.Any any_value = 15;
   }
 }
 

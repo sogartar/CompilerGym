@@ -9,7 +9,9 @@ import networkx as nx
 import numpy as np
 from gym.spaces import Space
 
-from compiler_gym.service.proto import Observation, ObservationSpace, ScalarRange
+from compiler_gym.service.proto import DoubleRange as ScalarRange
+from compiler_gym.service.proto import Event as Observation
+from compiler_gym.service.proto import ObservationSpace
 from compiler_gym.spaces.box import Box
 from compiler_gym.spaces.scalar import Scalar
 from compiler_gym.spaces.sequence import Sequence

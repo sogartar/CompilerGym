@@ -16,26 +16,28 @@ namespace compiler_gym::llvm_service {
 std::vector<ActionSpace> getLlvmActionSpaceList() {
   std::vector<ActionSpace> spaces;
   spaces.reserve(magic_enum::enum_count<LlvmActionSpace>());
-  for (const auto& value : magic_enum::enum_values<LlvmActionSpace>()) {
-    ActionSpace space;
-    space.set_name(util::enumNameToPascalCase<LlvmActionSpace>(value));
-    switch (value) {
+  for (const auto& enumValue : magic_enum::enum_values<LlvmActionSpace>()) {
+    ActionSpace actionSpace;
+    Space& space = *actionSpace.mutable_space();
+    space.set_name(util::enumNameToPascalCase<LlvmActionSpace>(enumValue));
+    switch (enumValue) {
       case LlvmActionSpace::PASSES_ALL: {
-        ChoiceSpace* flagChoice = space.add_choice();
-        flagChoice->set_name("flag");
+        DictSpace& spaceList = *space.mutable_space_dict();
+        auto& spaces = *spaceList.mutable_spaces();
+        Space& flagSpace = spaces["flag"];
+        flagSpace.set_name("flag");
 
-        NamedDiscreteSpace* flagChoiceSpace = flagChoice->mutable_named_discrete_space();
-        flagChoiceSpace->set_is_commandline(true);
-        for (const auto& value : magic_enum::enum_values<LlvmAction>()) {
-          flagChoiceSpace->add_value(util::enumNameToCommandlineFlag<LlvmAction>(value));
+        NamedDiscreteSpace& flagValue = *flagSpace.mutable_named_discrete();
+        for (const auto& enumValue : magic_enum::enum_values<LlvmAction>()) {
+          flagValue.add_names(util::enumNameToCommandlineFlag<LlvmAction>(enumValue));
         }
       } break;
       default:
         UNREACHABLE(fmt::format("Unknown LLVM action space {}",
-                                util::enumNameToPascalCase<LlvmActionSpace>(value)));
+                                util::enumNameToPascalCase<LlvmActionSpace>(enumValue)));
     }
 
-    spaces.push_back(space);
+    spaces.push_back(actionSpace);
   }
   return spaces;
 }

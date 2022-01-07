@@ -42,6 +42,7 @@ from compiler_gym.service.proto import (
     StringSpace,
     StringTensor,
     py_converters,
+    ObservationSpace
 )
 from compiler_gym.spaces import (
     Box,
@@ -325,6 +326,10 @@ def test_convert_boolean_range_message():
     assert converted_range.min == range.min
     assert converted_range.max == range.max
 
+    range_default = BooleanRange()
+    converted_range_default = py_converters.convert_range_message(range_default)
+    assert converted_range_default.min == False
+    assert converted_range_default.max == True
 
 def test_convert_to_boolean_range_message():
     scalar = Scalar(min=False, max=True, dtype=bool, name=None)
@@ -341,6 +346,17 @@ def test_convert_int64_range_message():
     assert converted_range.min == range.min
     assert converted_range.max == range.max
 
+    range_default = Int64Range()
+    converted_range_default = py_converters.convert_range_message(range_default)
+    assert converted_range_default.min == np.iinfo(np.int64).min
+    assert converted_range_default.max == np.iinfo(np.int64).max
+
+def test_convert_to_int64_range_message():
+    scalar = Scalar(min=2, max=3, dtype=np.int64, name=None)
+    range = py_converters.convert_to_range_message(scalar)
+    assert isinstance(range, Int64Range)
+    assert range.min == 2
+    assert range.max == 3
 
 def test_convert_float_range_message():
     range = FloatRange(min=2, max=3)
@@ -349,6 +365,17 @@ def test_convert_float_range_message():
     assert converted_range.min == range.min
     assert converted_range.max == range.max
 
+    range_default = DoubleRange()
+    converted_range_default = py_converters.convert_range_message(range_default)
+    assert np.isneginf(converted_range_default.min)
+    assert np.isposinf(converted_range_default.max)
+
+def test_convert_to_float_range_message():
+    scalar = Scalar(min=2, max=3, dtype=np.float32, name=None)
+    range = py_converters.convert_to_range_message(scalar)
+    assert isinstance(range, FloatRange)
+    assert range.min == 2
+    assert range.max == 3
 
 def test_convert_double_range_message():
     range = DoubleRange(min=2, max=3)
@@ -357,6 +384,17 @@ def test_convert_double_range_message():
     assert converted_range.min == range.min
     assert converted_range.max == range.max
 
+    range_default = DoubleRange()
+    converted_range_default = py_converters.convert_range_message(range_default)
+    assert np.isneginf(converted_range_default.min)
+    assert np.isposinf(converted_range_default.max)
+
+def test_convert_to_double_range_message():
+    scalar = Scalar(min=2, max=3, dtype=np.float64, name=None)
+    range = py_converters.convert_to_range_message(scalar)
+    assert isinstance(range, DoubleRange)
+    assert range.min == 2
+    assert range.max == 3
 
 def test_convert_boolean_box_message():
     box = BooleanBox(
@@ -856,6 +894,14 @@ def test_to_space_message_default_converter():
     assert converted_space.space_list.spaces[0].name == "dict"
     assert converted_space.space_list.spaces[0].space_dict.spaces["key"].name == "box"
 
+
+# def test_observation_space_converter():
+#     obs_space = ObservationSpace(space=Space(boolean_value=BooleanRange()),
+#                                          deterministic=True, platform_dependent=False)
+#     converted_obs_space = py_converters.message_default_converter()(obs_space)
+#     assert isnstance(converted_obs_space, ObservationSpaceSpec)
+#     assert converted_obs_space.deterministic == True
+#     assert converted_obs_space.platform_dependet == False
 
 if __name__ == "__main__":
     main()

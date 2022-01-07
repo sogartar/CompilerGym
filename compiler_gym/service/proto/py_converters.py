@@ -43,6 +43,7 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     StringSequenceSpace,
     StringSpace,
     StringTensor,
+    ObservationSpace
 )
 from compiler_gym.spaces.box import Box
 from compiler_gym.spaces.dict import Dict
@@ -354,6 +355,7 @@ def message_default_converter() -> TypeBasedConverter:
     conversion_map[Space] = SpaceMessageConverter(res)
     conversion_map[ListSpace] = ListSpaceMessageConverter(conversion_map[Space])
     conversion_map[DictSpace] = DictSpaceMessageConverter(conversion_map[Space])
+    #conversion_map[ObservationSpace] = ObservationSpaceConverter(res)
 
     conversion_map[any_pb2.Any] = ProtobufAnyConverter(
         unpacker=ProtobufAnyUnpacker(), message_converter=res
@@ -376,11 +378,28 @@ def to_event_message_default_converter() -> ToEventMessageConverter:
     return res
 
 
+range_type_default_min_map : DictType[Type, Any] = {
+    BooleanRange: False,
+    Int64Range: np.iinfo(np.int64).min,
+    FloatRange: np.float32(np.NINF),
+    DoubleRange: np.float64(np.NINF)
+    }
+
+range_type_default_max_map : DictType[Type, Any] = {
+    BooleanRange: True,
+    Int64Range: np.iinfo(np.int64).max,
+    FloatRange: np.float32(np.PINF),
+    DoubleRange: np.float64(np.PINF)
+    }
+
 def convert_range_message(
     range: Union[BooleanRange, Int64Range, FloatRange, DoubleRange]
 ) -> Scalar:
+    range_type = type(range)
+    min = range.min if range.HasField("min") else range_type_default_min_map[range_type]
+    max = range.max if range.HasField("max") else range_type_default_max_map[range_type]
     return Scalar(
-        name=None, min=range.min, max=range.max, dtype=type_to_dtype_map[type(range)]
+        name=None, min=min, max=max, dtype=type_to_dtype_map[range_type]
     )
 
 
@@ -615,7 +634,7 @@ class ToSpaceMessageConverter:
             DoubleSequenceSpace: "double_sequence",
             StringSequenceSpace: "string_sequence",
             BooleanBox: "boolean_box",
-            ByteBox: "bytes_box",
+            ByteBox: "byte_box",
             Int64Box: "int64_box",
             FloatBox: "float_box",
             DoubleBox: "double_box",

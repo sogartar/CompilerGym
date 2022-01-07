@@ -37,7 +37,7 @@ using nlohmann::json;
 const programl::ProgramGraphOptions programlOptions;
 
 Status setObservation(LlvmObservationSpace space, const fs::path& workingDirectory,
-                      Benchmark& benchmark, Observation& reply) {
+                      Benchmark& benchmark, Event& reply) {
   switch (space) {
     case LlvmObservationSpace::IR: {
       // Serialize the LLVM module to an IR string.

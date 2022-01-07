@@ -25,39 +25,40 @@ static constexpr size_t kAutophaseFeatureDim = 56;
 static constexpr size_t kMaximumPathLength = 4096;
 
 std::vector<ObservationSpace> getLlvmObservationSpaceList() {
-  std::vector<ObservationSpace> spaces;
+  std::vector<ObservationSpace> observationSpaces;
   spaces.reserve(magic_enum::enum_count<LlvmObservationSpace>());
   for (const auto& value : magic_enum::enum_values<LlvmObservationSpace>()) {
-    ObservationSpace space;
+    ObservationSpace observationSpace;
+    Space& space = *observationSpace.mutable_space();
     space.set_name(util::enumNameToPascalCase<LlvmObservationSpace>(value));
     switch (value) {
       case LlvmObservationSpace::IR: {
-        space.mutable_string_size_range()->mutable_min()->set_value(0);
-        space.set_deterministic(true);
-        space.set_platform_dependent(false);
+        space.mutable_string_value()->mutalbe_length_range()->mutable_min()->set_value(0);
+        observationSpace.set_deterministic(true);
+        observationSpace.set_platform_dependent(false);
         break;
       }
       case LlvmObservationSpace::IR_SHA1: {
-        space.mutable_string_size_range()->mutable_min()->set_value(40);
-        space.mutable_string_size_range()->mutable_max()->set_value(40);
-        space.set_deterministic(true);
-        space.set_platform_dependent(false);
+        space.mutable_string_value()->mutalbe_length_range()->mutable_min()->set_value(40);
+        space.mutable_string_value()->mutalbe_length_range()->mutable_max()->set_value(0);
+        observationSpace.set_deterministic(true);
+        observationSpace.set_platform_dependent(false);
         break;
       }
       case LlvmObservationSpace::BITCODE: {
-        space.mutable_binary_size_range()->mutable_min()->set_value(0);
-        space.set_deterministic(true);
-        space.set_platform_dependent(false);
+        space.mutable_byte_sequence()->mutable_length_range()->mutable_min()->set_value(0);
+        observationSpace.set_deterministic(true);
+        observationSpace.set_platform_dependent(false);
         break;
       }
       case LlvmObservationSpace::BITCODE_FILE: {
-        space.mutable_string_size_range()->mutable_min()->set_value(0);
+        space.mutable_string_value()->mutalbe_length_range()->mutable_min()->set_value(0);
         // 4096 is the maximum path length for most filesystems.
-        space.mutable_string_size_range()->mutable_max()->set_value(kMaximumPathLength);
+        space.mutable_string_value()->mutalbe_length_range()->mutable_max()->set_value(kMaximumPathLength);
         // A random file path is generated, so the returned value is not
         // deterministic.
-        space.set_deterministic(false);
-        space.set_platform_dependent(false);
+        observationSpace.set_deterministic(false);
+        observationSpace.set_platform_dependent(false);
         break;
       }
       case LlvmObservationSpace::INST_COUNT: {
@@ -66,8 +67,8 @@ std::vector<ObservationSpace> getLlvmObservationSpaceList() {
         std::vector<ScalarRange> featureSizes(kInstCountFeatureDimensionality, featureSize);
         *space.mutable_int64_range_list()->mutable_range() = {featureSizes.begin(),
                                                               featureSizes.end()};
-        space.set_deterministic(true);
-        space.set_platform_dependent(false);
+        observationSpace.set_deterministic(true);
+        observationSpace.set_platform_dependent(false);
         std::vector<int64_t> defaultValue(kInstCountFeatureDimensionality, 0);
         *space.mutable_default_value()->mutable_int64_list()->mutable_value() = {
             defaultValue.begin(), defaultValue.end()};
@@ -185,9 +186,9 @@ std::vector<ObservationSpace> getLlvmObservationSpaceList() {
         break;
       }
     }
-    spaces.push_back(space);
+    observationSpaces.push_back(observationSpace);
   }
-  return spaces;
+  return observationSpaces;
 }
 
 }  // namespace compiler_gym::llvm_service

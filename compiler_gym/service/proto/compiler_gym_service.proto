@@ -278,6 +278,12 @@ message StringSpace {
   Int64Range length_range = 1;
 }
 
+// Can be used in Space.any_value or Event.any_value.
+message Opaque {
+  string format = 1;
+  bytes data = 2;
+}
+
 message Space {
   string name = 1;
   oneof value {

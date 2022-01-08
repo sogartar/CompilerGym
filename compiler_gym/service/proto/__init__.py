@@ -57,6 +57,7 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     StringSequenceSpace,
     StringSpace,
     StringTensor,
+    Opaque
 )
 from compiler_gym.service.proto.compiler_gym_service_pb2_grpc import (
     CompilerGymServiceServicer,
@@ -115,6 +116,7 @@ __all__ = [
     "NamedDiscreteSpace",
     "NamedDiscreteSpace",
     "ObservationSpace",
+    "Opaque",
     "SendSessionParameterReply",
     "SendSessionParameterRequest",
     "ServiceError",

@@ -297,7 +297,7 @@ def test_protobuf_any_converter():
 
 def test_message_default_converter():
     value = 5
-    converter = py_converters.message_default_converter()
+    converter = py_converters.make_message_default_converter()
     message = Event(int64_value=value)
     converted = converter(message)
     assert type(converted) == int
@@ -898,7 +898,7 @@ def test_to_space_message_default_converter():
 # def test_observation_space_converter():
 #     obs_space = ObservationSpace(space=Space(boolean_value=BooleanRange()),
 #                                          deterministic=True, platform_dependent=False)
-#     converted_obs_space = py_converters.message_default_converter()(obs_space)
+#     converted_obs_space = py_converters.make_message_default_converter()(obs_space)
 #     assert isnstance(converted_obs_space, ObservationSpaceSpec)
 #     assert converted_obs_space.deterministic == True
 #     assert converted_obs_space.platform_dependet == False

@@ -9,6 +9,7 @@ from typing import List, Type, Union
 
 import google.protobuf.any_pb2 as any_pb2
 import numpy as np
+import networkx as nx
 from google.protobuf.message import Message
 
 from compiler_gym.service.proto.compiler_gym_service_pb2 import (
@@ -43,7 +44,8 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     StringSequenceSpace,
     StringSpace,
     StringTensor,
-    ObservationSpace
+    ObservationSpace,
+    Opaque
 )
 from compiler_gym.spaces.box import Box
 from compiler_gym.spaces.dict import Dict
@@ -315,7 +317,7 @@ class ProtobufAnyConverter:
         return self.message_converter(unpacked_message)
 
 
-def message_default_converter() -> TypeBasedConverter:
+def make_message_default_converter() -> TypeBasedConverter:
     conversion_map = {
         bool: convert_trivial,
         int: convert_trivial,
@@ -360,6 +362,8 @@ def message_default_converter() -> TypeBasedConverter:
     conversion_map[any_pb2.Any] = ProtobufAnyConverter(
         unpacker=ProtobufAnyUnpacker(), message_converter=res
     )
+
+    conversion_map[Opaque] = make_opaque_message_default_converter()
     return res
 
 
@@ -721,3 +725,25 @@ def to_space_message_default_converter() -> ToSpaceMessageConverter:
     conversion_map[Tuple] = ToListSpaceMessageConverter(res)
     conversion_map[Dict] = ToDictSpaceMessageConverter(res)
     return res
+
+class OpaqueMessageConverter:
+    format_coverter_map: DictType[str, Callable[[bytes], Any]]
+    
+    def __init__(self, format_coverter_map=None):
+        self.format_coverter_map = {} if format_coverter_map is None else format_coverter_map
+
+    def __call__(self, message: Opaque) -> Any:
+        return self.format_coverter_map[message.format](message.data)
+
+def make_opaque_message_default_converter():
+    return OpaqueMessageConverter({"json://networkx/MultiDiGraph": _json2nx, "json://": bytes_to_json })
+
+def bytes_to_json(data: bytes):
+    json.loads(data.decode("utf-8"))
+
+def _json2nx(data: bytes):
+    json_data = json.loads(data.decode("utf-8"))
+    return nx.readwrite.json_graph.node_link_graph(
+        json_data, multigraph=True, directed=True
+    )
+

@@ -58,7 +58,7 @@ class ObservationSpaceSpec:
         is set and the service terminates.
     """
 
-    message_converter: ClassVar[Callable[[Any], Any]] = py_converters.message_default_converter()
+    message_converter: ClassVar[Callable[[Any], Any]] = py_converters.make_message_default_converter()
 
     def __init__(
         self,

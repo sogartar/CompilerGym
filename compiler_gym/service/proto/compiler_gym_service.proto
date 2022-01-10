@@ -119,7 +119,7 @@ message StepReply {
   // A new action space. This field is set if, as a result of running the
   // requested action, the action space has changed. Else, the action space
   // remains unchanged.
-  Event new_action_space = 3;
+  ActionSpace new_action_space = 3;
   // Observed states after completing the action.
   repeated Event observation = 4;
 }

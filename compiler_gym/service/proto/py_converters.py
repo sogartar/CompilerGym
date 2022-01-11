@@ -10,6 +10,7 @@ from typing import List, Type, Union
 import google.protobuf.any_pb2 as any_pb2
 import numpy as np
 import networkx as nx
+import json
 from google.protobuf.message import Message
 
 from compiler_gym.service.proto.compiler_gym_service_pb2 import (
@@ -288,7 +289,7 @@ class ProtobufAnyUnpacker:
 
     def __init__(self, type_str_to_class_map: DictType[str, Type] = None):
         self.type_str_to_class_map = (
-            {} if type_str_to_class_map is None else type_str_to_class_map
+            {"compiler_gym.Opaque": Opaque} if type_str_to_class_map is None else type_str_to_class_map
         )
 
     def __call__(self, msg: any_pb2.Any) -> Message:
@@ -317,6 +318,15 @@ class ProtobufAnyConverter:
         return self.message_converter(unpacked_message)
 
 
+class ActionSpaceConverter:
+    message_converter: Callable[[Any], Any]
+    
+    def __init__(self, message_converter: Callable[[Any], Any]):
+        self.message_converter = message_converter
+
+    def __call__(self, message: ActionSpace) -> Any:
+        return self.message_converter(message.space)
+
 def make_message_default_converter() -> TypeBasedConverter:
     conversion_map = {
         bool: convert_trivial,
@@ -337,6 +347,7 @@ def make_message_default_converter() -> TypeBasedConverter:
         DoubleRange: convert_range_message,
         StringSpace: convert_string_space,
         BooleanSequenceSpace: convert_sequence_space,
+        ByteSequenceSpace: convert_sequence_space,
         BytesSequenceSpace: convert_sequence_space,
         Int64SequenceSpace: convert_sequence_space,
         FloatSequenceSpace: convert_sequence_space,
@@ -357,6 +368,7 @@ def make_message_default_converter() -> TypeBasedConverter:
     conversion_map[Space] = SpaceMessageConverter(res)
     conversion_map[ListSpace] = ListSpaceMessageConverter(conversion_map[Space])
     conversion_map[DictSpace] = DictSpaceMessageConverter(conversion_map[Space])
+    conversion_map[ActionSpace] = ActionSpaceConverter(res)
     #conversion_map[ObservationSpace] = ObservationSpaceConverter(res)
 
     conversion_map[any_pb2.Any] = ProtobufAnyConverter(
@@ -365,9 +377,6 @@ def make_message_default_converter() -> TypeBasedConverter:
 
     conversion_map[Opaque] = make_opaque_message_default_converter()
     return res
-
-
-message_default_converter: TypeBasedConverter = make_message_default_converter()
 
 def to_event_message_default_converter() -> ToEventMessageConverter:
     conversion_map = {
@@ -749,3 +758,5 @@ def _json2nx(data: bytes):
         json_data, multigraph=True, directed=True
     )
 
+
+message_default_converter: TypeBasedConverter = make_message_default_converter()

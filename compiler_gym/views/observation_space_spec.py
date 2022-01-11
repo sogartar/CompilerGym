@@ -114,11 +114,11 @@ class ObservationSpaceSpec:
     @classmethod
     def from_proto(cls, index: int, proto: ObservationSpace):
         return cls(id=proto.space.name, index=index,
-                            space=self.message_converter(proto.space),
-                            translate=self.message_converter, to_string=str,
+                            space=ObservationSpaceSpec.message_converter(proto.space),
+                            translate=ObservationSpaceSpec.message_converter, to_string=str,
                             deterministic=proto.deterministic,
                             platform_dependent=proto.platform_dependent,
-                            default_value=self.message_converter(proto.default_observation))
+                            default_value=ObservationSpaceSpec.message_converter(proto.default_observation))
 
 
     def make_derived_space(

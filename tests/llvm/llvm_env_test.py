@@ -51,7 +51,7 @@ def test_compiler_version(env: LlvmEnv):
 
 
 def test_action_space_names(env: LlvmEnv, action_names: List[str]):
-    assert set(env.action_space.names) == set(action_names)
+    assert set(env.action_space["flag"].names) == set(action_names)
 
 
 def test_action_spaces_names(env: LlvmEnv):

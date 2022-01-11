@@ -60,12 +60,14 @@ def main(argv):
                 print(f'    {name} = "{name}"', file=f)
             print(file=f)
             print("class actions(Enum):", file=f)
-            for name in env.action_space.names:
+            for name in env.action_space["flag"].names:
                 enum_name = "".join([x.capitalize() for x in name[1:].split("-")])
                 print(f'    {enum_name} = "{name}"', file=f)
             print(file=f)
             print("class action_descriptions(Enum):", file=f)
-            for name, description in zip(env.action_space.names, _FLAG_DESCRIPTIONS):
+            for name, description in zip(
+                env.action_space["flag"].names, _FLAG_DESCRIPTIONS
+            ):
                 enum_name = "".join([x.capitalize() for x in name[1:].split("-")])
                 sanitized_description = description.replace('" "', "")
                 sanitized_description = sanitized_description.replace('"', "")

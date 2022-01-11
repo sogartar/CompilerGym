@@ -17,10 +17,9 @@ namespace {
 TEST(ActionSpacesTest, getLlvmActionSpace) {
   const auto spaces = getLlvmActionSpaceList();
   ASSERT_EQ(spaces.size(), 1);
-  ASSERT_EQ(spaces[0].space.name(), "PassesAll");
-  ASSERT_EQ(spaces[0].space.value_case(), Space::ValueCase::kNamedDiscrete);
-  EXPECT_EQ(spaces[0].named_discrete().names_size(),
-            magic_enum::enum_count<LlvmAction>());
+  ASSERT_EQ(spaces[0].space().name(), "PassesAll");
+  ASSERT_EQ(spaces[0].space().value_case(), Space::ValueCase::kNamedDiscrete);
+  EXPECT_EQ(spaces[0].space().named_discrete().names_size(), magic_enum::enum_count<LlvmAction>());
 }
 
 }  // anonymous namespace

@@ -44,7 +44,7 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     StringSequenceSpace,
     StringSpace,
     StringTensor,
-    ObservationSpace,
+    ActionSpace,
     Opaque
 )
 from compiler_gym.spaces.box import Box
@@ -56,8 +56,8 @@ from compiler_gym.spaces.sequence import Sequence
 from compiler_gym.spaces.tuple import Tuple
 
 
-def proto_to_action_space():
-    pass
+def proto_to_action_space(space: ActionSpace):
+    return message_default_converter(space)
 
 
 class TypeBasedConverter:
@@ -366,6 +366,8 @@ def make_message_default_converter() -> TypeBasedConverter:
     conversion_map[Opaque] = make_opaque_message_default_converter()
     return res
 
+
+message_default_converter: TypeBasedConverter = make_message_default_converter()
 
 def to_event_message_default_converter() -> ToEventMessageConverter:
     conversion_map = {

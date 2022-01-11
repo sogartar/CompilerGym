@@ -10,7 +10,7 @@ from typing import Callable, Optional, Union, Any, ClassVar
 from gym.spaces import Space
 
 from compiler_gym.service.proto import (
-    Event as Observation,
+    Event,
     ObservationSpace,
     #DoubleRange as ScalarRange,
     py_converters)
@@ -65,7 +65,7 @@ class ObservationSpaceSpec:
         id: str,
         index: int,
         space: Space,
-        translate: Callable[[Union[ObservationType, Observation]], ObservationType],
+        translate: Callable[[Union[ObservationType, Event]], ObservationType],
         to_string: Callable[[ObservationType], str],
         deterministic: bool,
         platform_dependent: bool,

@@ -10,7 +10,7 @@ from typing import List
 
 import google.protobuf.text_format
 
-from compiler_gym.service.proto import Event as Observation
+from compiler_gym.service.proto import Event
 from compiler_gym.util.gym_type_hints import ObservationType
 from compiler_gym.util.runfiles_path import runfiles_path
 from compiler_gym.util.shell_format import plural
@@ -112,7 +112,7 @@ def compute_observation(
             f"Failed to parse {observation_space.id} observation: {e}"
         ) from e
 
-    observation = Observation()
+    observation = Event()
     try:
         google.protobuf.text_format.Parse(stdout, observation)
     except google.protobuf.text_format.ParseError as e:

@@ -4,6 +4,7 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from torch.ao.quantization.observer import default_observer
 """A CompilerGym service for GCC."""
 import codecs
 import hashlib
@@ -19,17 +20,21 @@ from urllib.request import urlopen
 
 from compiler_gym.envs.gcc import Gcc, Option
 from compiler_gym.service import CompilationSession
-from compiler_gym.service.proto import Action as ActionProto
 from compiler_gym.service.proto import (
     ActionSpace,
     Benchmark,
     ChoiceSpace,
+    Event,
     NamedDiscreteSpace,
-    Observation,
     ObservationSpace,
     ScalarLimit,
     ScalarRange,
     ScalarRangeList,
+    Int64Range,
+    StringSpace,
+    ByteSequenceSpace,
+    ListSpace,
+    Int64Tensor
 )
 
 logger = logging.getLogger(__name__)
@@ -70,98 +75,95 @@ def make_gcc_compilation_session(gcc_bin: str):
 
     action_spaces_ = [
         ActionSpace(
-            name="default",
-            choice=[
-                ChoiceSpace(
-                    name="default",
-                    named_discrete_space=NamedDiscreteSpace(
-                        value=[str(a) for a in actions]
-                    ),
-                )
-            ],
-        )
-    ]
+            space=Space(
+                name="default",
+                named_discrete=NamedDiscreteSpace(
+                        names=[str(a) for a in actions]
+                    )
+                ),
+            ),
+        ]
 
     observation_spaces_ = [
         # A string of the source code
         ObservationSpace(
             name="source",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            string_value=StringSpace(length_range=Int64Range(min=0)),
             deterministic=True,
             platform_dependent=False,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # A string of the rtl code
         ObservationSpace(
             name="rtl",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            string_value=StringSpace(length_range=Int64Range(min=0)),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # A string of the assembled code
         ObservationSpace(
             name="asm",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            string_value=StringSpace(length_range=Int64Range(min=0)),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # The size of the assembled code
         ObservationSpace(
             name="asm_size",
-            scalar_int64_range=ScalarRange(min=ScalarLimit(value=-1)),
+            int64_value=Int64Range(min=-1),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(
-                scalar_int64=-1,
+            default_observation=Event(
+                int64_value=-1,
             ),
         ),
         # The hash of the assembled code
         ObservationSpace(
             name="asm_hash",
-            string_size_range=ScalarRange(
-                min=ScalarLimit(value=0), max=ScalarLimit(value=200)
+            string_value=StringSpace(
+                length_range=Int64Range(min=0, max=200)
             ),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # Asm instruction counts - Counter as a JSON string
         ObservationSpace(
             name="instruction_counts",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            string_value=StringSpace(length_range=Int64Range(min=0)),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # A bytes of the object code
         ObservationSpace(
             name="obj",
-            binary_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            binary_size_range=ByteSequenceSpace(length_range=Int64Range(min=0)),
             deterministic=True,
             platform_dependent=False,
-            default_value=Observation(binary_value=b""),
+            default_observation=Event(bytes_value=b""),
         ),
         # The size of the object code
         ObservationSpace(
             name="obj_size",
-            scalar_int64_range=ScalarRange(min=ScalarLimit(value=-1)),
+            int64_value=Int64Range(min=-1),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(
-                scalar_int64=-1,
+            default_observation=Event(
+                int64_value=-1,
             ),
         ),
         # The hash of the object code
         ObservationSpace(
             name="obj_hash",
-            string_size_range=ScalarRange(
-                min=ScalarLimit(value=0), max=ScalarLimit(value=200)
+            string_value=StringSpace(
+                length_range=Int64Range(min=0, max=200)
             ),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
         # A list of the choices. Each element corresponds to an option in the spec.
         # '-1' indicates that this is empty on the command line (e.g. if the choice
@@ -170,11 +172,11 @@ def make_gcc_compilation_session(gcc_bin: str):
         # (e.g. for the -O flag, 5 means use '-Ofast' on the command line.)
         ObservationSpace(
             name="choices",
-            int64_range_list=ScalarRangeList(
-                range=[
-                    ScalarRange(
-                        min=ScalarLimit(value=0), max=ScalarLimit(value=len(option) - 1)
-                    )
+            space_list=ListSpace(
+                spaces=[
+                    Space(int64_value=Int64Range(
+                        min=0, max=len(option) - 1
+                    ))
                     for option in gcc.spec.options
                 ]
             ),
@@ -182,12 +184,12 @@ def make_gcc_compilation_session(gcc_bin: str):
         # The command line for compiling the object file as a string
         ObservationSpace(
             name="command_line",
-            string_size_range=ScalarRange(
-                min=ScalarLimit(value=0), max=ScalarLimit(value=200)
+            string_value=StringSpace(
+                length_range=Int64Range(min=0, max=200)
             ),
             deterministic=True,
             platform_dependent=True,
-            default_value=Observation(string_value=""),
+            default_observation=Event(string_value=""),
         ),
     ]
 
@@ -233,7 +235,7 @@ def make_gcc_compilation_session(gcc_bin: str):
 
         @property
         def num_actions(self) -> int:
-            return len(self.action_spaces[0].choice[0].named_discrete_space.value)
+            return len(self.action_spaces[0].space.named_discrete.names)
 
         @property
         def choices(self) -> List[int]:
@@ -471,13 +473,13 @@ def make_gcc_compilation_session(gcc_bin: str):
             self._asm_hash = None
 
         def apply_action(
-            self, action_proto: ActionProto
+            self, action_proto: Event
         ) -> Tuple[bool, Optional[ActionSpace], bool]:
             """Apply an action."""
-            if len(action_proto.choice) != 1:
-                raise ValueError("Invalid choice count")
+            if not action_proto.HasField("int64_value"):
+                raise ValueError("Invalid action, int64_value expected.")
 
-            choice_index = action_proto.choice[0].named_discrete_value_index
+            choice_index = action_proto.int64_value
             if choice_index < 0 or choice_index >= self.num_actions:
                 raise ValueError("Out-of-range")
 
@@ -499,36 +501,35 @@ def make_gcc_compilation_session(gcc_bin: str):
 
         def get_observation(self, observation_space: ObservationSpace) -> Observation:
             """Get one of the observations"""
-            if observation_space.name == "source":
-                return Observation(string_value=self.source or "")
-            elif observation_space.name == "rtl":
-                return Observation(string_value=self.rtl or "")
-            elif observation_space.name == "asm":
-                return Observation(string_value=self.asm or "")
-            elif observation_space.name == "asm_size":
-                return Observation(scalar_int64=self.asm_size or -1)
-            elif observation_space.name == "asm_hash":
-                return Observation(string_value=self.asm_hash or "")
-            elif observation_space.name == "instruction_counts":
-                return Observation(string_value=self.instruction_counts or "{}")
-            elif observation_space.name == "obj":
-                return Observation(binary_value=self.obj or b"")
-            elif observation_space.name == "obj_size":
-                return Observation(scalar_int64=self.obj_size or -1)
-            elif observation_space.name == "obj_hash":
-                return Observation(string_value=self.obj_hash or "")
-            elif observation_space.name == "choices":
-                observation = Observation()
-                observation.int64_list.value[:] = self.choices
+            if observation_space.space.name == "source":
+                return Event(string_value=self.source or "")
+            elif observation_space.space.name == "rtl":
+                return Event(string_value=self.rtl or "")
+            elif observation_space.space.name == "asm":
+                return Event(string_value=self.asm or "")
+            elif observation_space.space.name == "asm_size":
+                return Event(int64_value=self.asm_size or -1)
+            elif observation_space.space.name == "asm_hash":
+                return Event(string_value=self.asm_hash or "")
+            elif observation_space.space.name == "instruction_counts":
+                return Event(string_value=self.instruction_counts or "{}")
+            elif observation_space.space.name == "obj":
+                return Event(binary_value=self.obj or b"")
+            elif observation_space.space.name == "obj_size":
+                return Event(int64_value=self.obj_size or -1)
+            elif observation_space.space.name == "obj_hash":
+                return Event(string_value=self.obj_hash or "")
+            elif observation_space.space.name == "choices":
+                observation = Event(int64_tensor=Int64Tensor(shape=[len(self.choices)], values=self.choices))
                 return observation
-            elif observation_space.name == "command_line":
-                return Observation(
+            elif observation_space.space.name == "command_line":
+                return Event(
                     string_value=gcc.bin
                     + " "
                     + " ".join(map(str, self.obj_command_line("src.c", "obj.o")))
                 )
             else:
-                raise KeyError(observation_space.name)
+                raise KeyError(observation_space.space.name)
 
         def handle_session_parameter(self, key: str, value: str) -> Optional[str]:
             if key == "gcc_spec":

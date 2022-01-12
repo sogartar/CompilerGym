@@ -22,15 +22,16 @@ std::vector<ActionSpace> getLlvmActionSpaceList() {
     space.set_name(util::enumNameToPascalCase<LlvmActionSpace>(enumValue));
     switch (enumValue) {
       case LlvmActionSpace::PASSES_ALL: {
-        DictSpace& spaceList = *space.mutable_space_dict();
-        auto& spaces = *spaceList.mutable_spaces();
-        Space& flagSpace = spaces["flag"];
-        flagSpace.set_name("flag");
+//        DictSpace& spaceList = *space.mutable_space_dict();
+//        auto& spaces = *spaceList.mutable_spaces();
+//        Space& flagSpace = spaces["flag"];
+//        flagSpace.set_name("flag");
 
-        NamedDiscreteSpace& flagValue = *flagSpace.mutable_named_discrete();
+        CommandlineSpace flagValue;
         for (const auto& enumValue : magic_enum::enum_values<LlvmAction>()) {
           flagValue.add_names(util::enumNameToCommandlineFlag<LlvmAction>(enumValue));
         }
+        space.mutable_any_value()->PackFrom(flagValue);
       } break;
       default:
         UNREACHABLE(fmt::format("Unknown LLVM action space {}",

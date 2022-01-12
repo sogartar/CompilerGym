@@ -35,7 +35,7 @@ if bool(os.environ.get("CI")):
     ]
 
 with gym.make("llvm-v0") as env:
-    ACTION_NAMES = list(env.action_space["flag"].names)
+    ACTION_NAMES = list(env.action_space.names)
     OBSERVATION_SPACE_NAMES = sorted(env.observation.spaces.keys())
     REWARD_SPACE_NAMES = sorted(env.reward.spaces.keys())
     DATASET_NAMES = sorted(d.name for d in env.datasets)

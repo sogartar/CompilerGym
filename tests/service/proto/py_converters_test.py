@@ -26,6 +26,7 @@ from compiler_gym.service.proto import (
     DoubleRange,
     DoubleSequenceSpace,
     DoubleTensor,
+    CommandlineSpace,
     Event,
     FloatBox,
     FloatRange,
@@ -38,6 +39,7 @@ from compiler_gym.service.proto import (
     ListEvent,
     ListSpace,
     NamedDiscreteSpace,
+    Opaque,
     Space,
     StringSpace,
     StringTensor,
@@ -48,6 +50,7 @@ from compiler_gym.spaces import (
     Box,
     Dict,
     Discrete,
+    Commandline,
     NamedDiscrete,
     Scalar,
     Sequence,
@@ -572,8 +575,15 @@ def test_convert_to_named_discrete_space_message():
 def test_convert_named_discrete_space_message():
     message = NamedDiscreteSpace(names=["a", "b", "c"])
     converted_message = py_converters.convert_named_discrete_space_message(message)
+    assert isinstance(converted_message, NamedDiscrete)
     assert np.array_equal(message.names, converted_message.names)
 
+
+def test_convert_commandline_space_message():
+    message = CommandlineSpace(names=["a", "b", "c"])
+    converted_message = py_converters.convert_commandline_space_message(message)
+    assert isinstance(converted_message, Commandline)
+    assert np.array_equal(message.names, converted_message.names)
 
 def test_convert_boolean_sequence_space():
     seq = BooleanSequenceSpace(
@@ -585,6 +595,7 @@ def test_convert_boolean_sequence_space():
     assert converted_seq.dtype == bool
     assert converted_seq.size_range[0] == 1
     assert converted_seq.size_range[1] == 2
+    assert isinstance(converted_seq.scalar_range, Scalar)
     assert converted_seq.scalar_range.min == True  # noqa: E712
     assert converted_seq.scalar_range.max == False  # noqa: E712
 
@@ -600,6 +611,7 @@ def test_convert_to_boolean_sequence_space():
     assert isinstance(converted_seq, BooleanSequenceSpace)
     assert converted_seq.length_range.min == 1
     assert converted_seq.length_range.max == 2
+    assert isinstance(converted_seq.scalar_range, BooleanRange)
     assert converted_seq.scalar_range.min == True  # noqa: E712
     assert converted_seq.scalar_range.max == False  # noqa: E712
 
@@ -630,6 +642,7 @@ def test_convert_byte_sequence_space():
     assert converted_seq.dtype == np.int8
     assert converted_seq.size_range[0] == 1
     assert converted_seq.size_range[1] == 2
+    assert isinstance(converted_seq.scalar_range, Scalar)
     assert converted_seq.scalar_range.min == 3
     assert converted_seq.scalar_range.max == 4
 
@@ -645,6 +658,7 @@ def test_convert_to_byte_sequence_space():
     assert isinstance(converted_seq, ByteSequenceSpace)
     assert converted_seq.length_range.min == 1
     assert converted_seq.length_range.max == 2
+    assert isinstance(converted_seq.scalar_range, Int64Range)
     assert converted_seq.scalar_range.min == 4
     assert converted_seq.scalar_range.max == 5
 
@@ -658,6 +672,7 @@ def test_convert_int64_sequence_space():
     assert converted_seq.dtype == np.int64
     assert converted_seq.size_range[0] == 1
     assert converted_seq.size_range[1] == 2
+    assert isinstance(converted_seq.scalar_range, Scalar)
     assert converted_seq.scalar_range.min == 3
     assert converted_seq.scalar_range.max == 4
 
@@ -673,6 +688,7 @@ def test_convert_to_int64_sequence_space():
     assert isinstance(converted_seq, Int64SequenceSpace)
     assert converted_seq.length_range.min == 1
     assert converted_seq.length_range.max == 2
+    assert isinstance(converted_seq.scalar_range, Int64Range)
     assert converted_seq.scalar_range.min == 4
     assert converted_seq.scalar_range.max == 5
 
@@ -686,6 +702,7 @@ def test_convert_float_sequence_space():
     assert converted_seq.dtype == np.float32
     assert converted_seq.size_range[0] == 1
     assert converted_seq.size_range[1] == 2
+    assert isinstance(converted_seq.scalar_range, Scalar)
     assert np.isclose(converted_seq.scalar_range.min, 3.1)
     assert converted_seq.scalar_range.max == 4
 
@@ -701,6 +718,7 @@ def test_convert_to_float_sequence_space():
     assert isinstance(converted_seq, FloatSequenceSpace)
     assert converted_seq.length_range.min == 1
     assert converted_seq.length_range.max == 2
+    assert isinstance(converted_seq.scalar_range, FloatRange)
     assert np.isclose(converted_seq.scalar_range.min, 4)
     assert np.isclose(converted_seq.scalar_range.max, 5)
 
@@ -714,6 +732,7 @@ def test_convert_double_sequence_space():
     assert converted_seq.dtype == float
     assert converted_seq.size_range[0] == 1
     assert converted_seq.size_range[1] == 2
+    assert isinstance(converted_seq.scalar_range, Scalar)
     assert converted_seq.scalar_range.min == 3.1
     assert converted_seq.scalar_range.max == 4
 
@@ -729,17 +748,18 @@ def test_convert_to_double_sequence_space():
     assert isinstance(converted_seq, DoubleSequenceSpace)
     assert converted_seq.length_range.min == 1
     assert converted_seq.length_range.max == 2
+    assert isinstance(converted_seq.scalar_range, DoubleRange)
     assert converted_seq.scalar_range.min == 4.0
     assert converted_seq.scalar_range.max == 5.0
 
 
-def test_convert_string_sequence_space():
-    seq = BytesSequenceSpace(length_range=Int64Range(min=1, max=2))
-    converted_seq = py_converters.convert_sequence_space(seq)
-    assert isinstance(converted_seq, Sequence)
-    assert converted_seq.dtype == bytes
-    assert converted_seq.size_range[0] == 1
-    assert converted_seq.size_range[1] == 2
+# def test_convert_string_sequence_space():
+#     seq = StringSequenceSpace(length_range=Int64Range(min=1, max=2))
+#     converted_seq = py_converters.convert_sequence_space(seq)
+#     assert isinstance(converted_seq, Sequence)
+#     assert converted_seq.dtype == str
+#     assert converted_seq.size_range[0] == 1
+#     assert converted_seq.size_range[1] == 2
 
 
 # def test_convert_to_string_sequence_space():
@@ -893,6 +913,15 @@ def test_to_space_message_default_converter():
     assert converted_space.name == "list"
     assert converted_space.space_list.spaces[0].name == "dict"
     assert converted_space.space_list.spaces[0].space_dict.spaces["key"].name == "box"
+
+
+def test_opaque_json_message_converter():
+    message = Opaque(format="json://", data="{\"key\": \"val\"}".encode("utf-8"))
+    converted_message = py_converters.message_default_converter(message)
+    assert isinstance(converted_message, Mapping)
+    assert len(converted_message) == 1
+    assert "key" in converted_message
+    assert converted_message["key"] == "val"
 
 
 # def test_observation_space_converter():

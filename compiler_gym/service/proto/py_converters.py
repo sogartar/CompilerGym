@@ -22,6 +22,7 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     ByteSequenceSpace,
     BytesSequenceSpace,
     ByteTensor,
+    CommandlineSpace,
     DictEvent,
     DictSpace,
     DiscreteSpace,
@@ -49,6 +50,7 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     Opaque
 )
 from compiler_gym.spaces.box import Box
+from compiler_gym.spaces.commandline import Commandline, CommandlineFlag
 from compiler_gym.spaces.dict import Dict
 from compiler_gym.spaces.discrete import Discrete
 from compiler_gym.spaces.named_discrete import NamedDiscrete
@@ -289,7 +291,8 @@ class ProtobufAnyUnpacker:
 
     def __init__(self, type_str_to_class_map: DictType[str, Type] = None):
         self.type_str_to_class_map = (
-            {"compiler_gym.Opaque": Opaque} if type_str_to_class_map is None else type_str_to_class_map
+            {"compiler_gym.Opaque": Opaque,
+             "compiler_gym.CommandlineSpace": CommandlineSpace} if type_str_to_class_map is None else type_str_to_class_map
         )
 
     def __call__(self, msg: any_pb2.Any) -> Message:
@@ -341,6 +344,7 @@ def make_message_default_converter() -> TypeBasedConverter:
         StringTensor: convert_tensor_message_to_numpy,
         DiscreteSpace: convert_discrete_space_message,
         NamedDiscreteSpace: convert_named_discrete_space_message,
+        CommandlineSpace: convert_commandline_space_message,
         BooleanRange: convert_range_message,
         Int64Range: convert_range_message,
         FloatRange: convert_range_message,
@@ -488,6 +492,10 @@ def convert_named_discrete_space_message(message: NamedDiscreteSpace) -> NamedDi
     return NamedDiscrete(items=message.names, name=None)
 
 
+def convert_commandline_space_message(message: CommandlineSpace) -> Commandline:
+    return Commandline(items=[CommandlineFlag(name=name, flag=name, description="")
+                    for name in message.names], name=None)
+
 def convert_to_named_discrete_space_message(space: NamedDiscrete) -> NamedDiscreteSpace:
     return NamedDiscreteSpace(names=space.names)
 
@@ -502,10 +510,11 @@ def convert_sequence_space(
         StringSequenceSpace,
     ]
 ) -> Sequence:
-    scalar_range = seq.scalar_range if hasattr(seq, "scalar_range") else None
+    scalar_range = convert_range_message(seq.scalar_range) if hasattr(seq, "scalar_range") else None
+    length_range = convert_range_message(seq.length_range)
     return Sequence(
         name=None,
-        size_range=(seq.length_range.min, seq.length_range.max),
+        size_range=(length_range.min, length_range.max),
         dtype=type_to_dtype_map[type(seq)],
         scalar_range=scalar_range,
     )
@@ -750,7 +759,7 @@ def make_opaque_message_default_converter():
     return OpaqueMessageConverter({"json://networkx/MultiDiGraph": _json2nx, "json://": bytes_to_json })
 
 def bytes_to_json(data: bytes):
-    json.loads(data.decode("utf-8"))
+    return json.loads(data.decode("utf-8"))
 
 def _json2nx(data: bytes):
     json_data = json.loads(data.decode("utf-8"))

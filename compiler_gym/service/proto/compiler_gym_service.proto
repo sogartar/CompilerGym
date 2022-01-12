@@ -284,6 +284,10 @@ message Opaque {
   bytes data = 2;
 }
 
+message CommandlineSpace {
+  repeated string names = 1;
+}
+
 message Space {
   string name = 1;
   oneof value {

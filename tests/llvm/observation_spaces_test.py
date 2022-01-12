@@ -77,7 +77,7 @@ def test_ir_observation_space(env: LlvmEnv):
     space = env.observation.spaces[key]
     assert isinstance(space.space, Sequence)
     assert space.space.dtype == str
-    assert space.space.size_range == (0, None)
+    assert space.space.size_range == (0, np.iinfo(np.int64).max)
 
     value: str = env.observation[key]
     print(value)  # For debugging in case of error.
@@ -112,7 +112,7 @@ def test_bitcode_observation_space(env: LlvmEnv):
     space = env.observation.spaces[key]
     assert isinstance(space.space, Sequence)
     assert space.space.dtype == bytes
-    assert space.space.size_range == (0, None)
+    assert space.space.size_range == (0, np.iinfo(np.int64).max)
 
     assert space.deterministic
     assert not space.platform_dependent

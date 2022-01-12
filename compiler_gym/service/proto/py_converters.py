@@ -111,7 +111,7 @@ def convert_numpy_to_boolean_tensor_message(tensor: np.ndarray):
     return BooleanTensor(values=tensor.flatten(), shape=tensor.shape)
 
 
-def convert_byte_tensor_message_to_numpy(tensor: FloatTensor):
+def convert_byte_tensor_message_to_numpy(tensor: ByteTensor):
     res = np.frombuffer(tensor.values, dtype=np.byte)
     res = res.reshape(tensor.shape)
     return res

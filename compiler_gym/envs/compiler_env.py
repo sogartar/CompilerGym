@@ -970,7 +970,7 @@ class CompilerEnv(gym.Env):
         # If the action space has changed, update it.
         if reply.HasField("new_action_space"):
             self.action_space = proto_to_action_space(
-                reply.action_space
+                reply.new_action_space
             )
 
         # Translate observations to python representations.

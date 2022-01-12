@@ -44,6 +44,7 @@ Status setObservation(LlvmObservationSpace space, const fs::path& workingDirecto
       std::string ir;
       llvm::raw_string_ostream rso(ir);
       benchmark.module().print(rso, /*AAW=*/nullptr);
+      rso.flush();
       reply.set_string_value(ir);
       break;
     }
@@ -63,6 +64,7 @@ Status setObservation(LlvmObservationSpace space, const fs::path& workingDirecto
       std::string bitcode;
       llvm::raw_string_ostream outbuffer(bitcode);
       llvm::WriteBitcodeToFile(benchmark.module(), outbuffer);
+      outbuffer.flush();
       *reply.mutable_byte_tensor()->mutable_shape()->Add() = bitcode.size();
       *reply.mutable_byte_tensor()->mutable_values() = bitcode;
       break;

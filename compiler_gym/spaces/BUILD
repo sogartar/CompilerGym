@@ -76,6 +76,7 @@ py_library(
 py_library(
     name = "sequence",
     srcs = ["sequence.py"],
+    visibility = ["//compiler_gym:__subpackages__"],
     deps = [
         ":scalar",
     ],

@@ -8,10 +8,14 @@ import pytest
 
 from compiler_gym.service.connection import ServiceError
 from compiler_gym.service.proto import (
+    DoubleBox,
+    DoubleTensor,
+    Int64Box,
+    Int64Range,
+    Int64Tensor,
     ObservationSpace,
-    ScalarLimit,
-    ScalarRange,
-    ScalarRangeList,
+    Space,
+    StringSpace,
 )
 from compiler_gym.views import ObservationView
 from tests.test_main import main
@@ -43,35 +47,30 @@ def test_empty_space():
 def test_observed_value_types():
     spaces = [
         ObservationSpace(
-            name="ir",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
-        ),
-        ObservationSpace(
-            name="features",
-            int64_range_list=ScalarRangeList(
-                range=[
-                    ScalarRange(
-                        min=ScalarLimit(value=-100), max=ScalarLimit(value=100)
-                    ),
-                    ScalarRange(
-                        min=ScalarLimit(value=-100), max=ScalarLimit(value=100)
-                    ),
-                ]
+            space=Space(
+                name="ir", string_value=StringSpace(length_range=Int64Range(min=0))
             ),
         ),
         ObservationSpace(
-            name="dfeat",
-            double_range_list=ScalarRangeList(
-                range=[
-                    ScalarRange(min=ScalarLimit(value=0.5), max=ScalarLimit(value=2.5))
-                ]
+            space=Space(
+                name="features",
+                int64_box=Int64Box(
+                    low=Int64Tensor(shape=[2], values=[-100, -100]),
+                    high=Int64Tensor(shape=[2], values=[100, 100]),
+                ),
+            )
+        ),
+        ObservationSpace(
+            space=Space(
+                name="dfeat",
+                double_box=DoubleBox(
+                    low=DoubleTensor(shape=[1], values=[0.5]),
+                    high=DoubleTensor(shape=[1], values=[2.5]),
+                ),
             ),
         ),
         ObservationSpace(
-            name="binary",
-            binary_size_range=ScalarRange(
-                min=ScalarLimit(value=5), max=ScalarLimit(value=5)
-            ),
+            space=Space(name="binary", int64_value=Int64Range(min=5, max=5)),
         ),
     ]
     mock = MockRawStep(
@@ -138,8 +137,7 @@ def test_observation_when_raw_step_returns_incorrect_no_of_observations():
 
     spaces = [
         ObservationSpace(
-            name="ir",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            space=Space(name="ir", int64_value=Int64Range(min=0)),
         )
     ]
 
@@ -171,8 +169,7 @@ def test_observation_when_raw_step_returns_done():
 
     spaces = [
         ObservationSpace(
-            name="ir",
-            string_size_range=ScalarRange(min=ScalarLimit(value=0)),
+            space=Space(name="ir", int64_value=Int64Range(min=0)),
         )
     ]
 

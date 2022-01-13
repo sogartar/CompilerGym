@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 from typing import Optional, Tuple
 
+import numpy as np
 from gym.spaces import Space
 
 from compiler_gym.spaces.scalar import Scalar
@@ -94,9 +95,14 @@ class Sequence(Space):
         if self.dtype in {str, bytes}:
             if not isinstance(x, self.dtype):
                 return False
+        elif hasattr(x, "dtype"):
+            if not np.issubdtype(
+                np.find_common_type([], [x.dtype, self.dtype]), self.dtype
+            ):
+                return False
         else:
             for element in x:
-                if not isinstance(element, self.dtype):
+                if not np.issubdtype(type(element), self.dtype):
                     return False
 
         # Run the bounds check on every scalar element, if there is a scalar

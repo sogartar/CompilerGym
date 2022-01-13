@@ -2,18 +2,19 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import json
 from builtins import getattr
 from typing import Any, Callable
 from typing import Dict as DictType
 from typing import List, Type, Union
 
 import google.protobuf.any_pb2 as any_pb2
-import numpy as np
 import networkx as nx
-import json
+import numpy as np
 from google.protobuf.message import Message
 
 from compiler_gym.service.proto.compiler_gym_service_pb2 import (
+    ActionSpace,
     BooleanBox,
     BooleanRange,
     BooleanSequenceSpace,
@@ -42,12 +43,11 @@ from compiler_gym.service.proto.compiler_gym_service_pb2 import (
     ListEvent,
     ListSpace,
     NamedDiscreteSpace,
+    Opaque,
     Space,
     StringSequenceSpace,
     StringSpace,
     StringTensor,
-    ActionSpace,
-    Opaque
 )
 from compiler_gym.spaces.box import Box
 from compiler_gym.spaces.commandline import Commandline, CommandlineFlag
@@ -147,6 +147,10 @@ convert_tensor_message_to_numpy = TypeBasedConverter(
         StringTensor: convert_standard_tensor_message_to_numpy,
     }
 )
+
+
+def convert_bytes_to_numpy(arr: bytes) -> np.ndarray:
+    return np.frombuffer(arr, dtype=np.int8)
 
 
 class NumpyToTensorMessageConverter:
@@ -291,8 +295,12 @@ class ProtobufAnyUnpacker:
 
     def __init__(self, type_str_to_class_map: DictType[str, Type] = None):
         self.type_str_to_class_map = (
-            {"compiler_gym.Opaque": Opaque,
-             "compiler_gym.CommandlineSpace": CommandlineSpace} if type_str_to_class_map is None else type_str_to_class_map
+            {
+                "compiler_gym.Opaque": Opaque,
+                "compiler_gym.CommandlineSpace": CommandlineSpace,
+            }
+            if type_str_to_class_map is None
+            else type_str_to_class_map
         )
 
     def __call__(self, msg: any_pb2.Any) -> Message:
@@ -323,12 +331,13 @@ class ProtobufAnyConverter:
 
 class ActionSpaceConverter:
     message_converter: Callable[[Any], Any]
-    
+
     def __init__(self, message_converter: Callable[[Any], Any]):
         self.message_converter = message_converter
 
     def __call__(self, message: ActionSpace) -> Any:
         return self.message_converter(message.space)
+
 
 def make_message_default_converter() -> TypeBasedConverter:
     conversion_map = {
@@ -336,6 +345,7 @@ def make_message_default_converter() -> TypeBasedConverter:
         int: convert_trivial,
         float: convert_trivial,
         str: convert_trivial,
+        bytes: convert_bytes_to_numpy,
         BooleanTensor: convert_tensor_message_to_numpy,
         ByteTensor: convert_tensor_message_to_numpy,
         Int64Tensor: convert_tensor_message_to_numpy,
@@ -373,7 +383,7 @@ def make_message_default_converter() -> TypeBasedConverter:
     conversion_map[ListSpace] = ListSpaceMessageConverter(conversion_map[Space])
     conversion_map[DictSpace] = DictSpaceMessageConverter(conversion_map[Space])
     conversion_map[ActionSpace] = ActionSpaceConverter(res)
-    #conversion_map[ObservationSpace] = ObservationSpaceConverter(res)
+    # conversion_map[ObservationSpace] = ObservationSpaceConverter(res)
 
     conversion_map[any_pb2.Any] = ProtobufAnyConverter(
         unpacker=ProtobufAnyUnpacker(), message_converter=res
@@ -381,6 +391,7 @@ def make_message_default_converter() -> TypeBasedConverter:
 
     conversion_map[Opaque] = make_opaque_message_default_converter()
     return res
+
 
 def to_event_message_default_converter() -> ToEventMessageConverter:
     conversion_map = {
@@ -397,19 +408,20 @@ def to_event_message_default_converter() -> ToEventMessageConverter:
     return res
 
 
-range_type_default_min_map : DictType[Type, Any] = {
+range_type_default_min_map: DictType[Type, Any] = {
     BooleanRange: False,
     Int64Range: np.iinfo(np.int64).min,
     FloatRange: np.float32(np.NINF),
-    DoubleRange: np.float64(np.NINF)
-    }
+    DoubleRange: np.float64(np.NINF),
+}
 
-range_type_default_max_map : DictType[Type, Any] = {
+range_type_default_max_map: DictType[Type, Any] = {
     BooleanRange: True,
     Int64Range: np.iinfo(np.int64).max,
     FloatRange: np.float32(np.PINF),
-    DoubleRange: np.float64(np.PINF)
-    }
+    DoubleRange: np.float64(np.PINF),
+}
+
 
 def convert_range_message(
     range: Union[BooleanRange, Int64Range, FloatRange, DoubleRange]
@@ -417,9 +429,7 @@ def convert_range_message(
     range_type = type(range)
     min = range.min if range.HasField("min") else range_type_default_min_map[range_type]
     max = range.max if range.HasField("max") else range_type_default_max_map[range_type]
-    return Scalar(
-        name=None, min=min, max=max, dtype=type_to_dtype_map[range_type]
-    )
+    return Scalar(name=None, min=min, max=max, dtype=type_to_dtype_map[range_type])
 
 
 class ToRangeMessageConverter:
@@ -493,8 +503,14 @@ def convert_named_discrete_space_message(message: NamedDiscreteSpace) -> NamedDi
 
 
 def convert_commandline_space_message(message: CommandlineSpace) -> Commandline:
-    return Commandline(items=[CommandlineFlag(name=name, flag=name, description="")
-                    for name in message.names], name=None)
+    return Commandline(
+        items=[
+            CommandlineFlag(name=name, flag=name, description="")
+            for name in message.names
+        ],
+        name=None,
+    )
+
 
 def convert_to_named_discrete_space_message(space: NamedDiscrete) -> NamedDiscreteSpace:
     return NamedDiscreteSpace(names=space.names)
@@ -510,7 +526,11 @@ def convert_sequence_space(
         StringSequenceSpace,
     ]
 ) -> Sequence:
-    scalar_range = convert_range_message(seq.scalar_range) if hasattr(seq, "scalar_range") else None
+    scalar_range = (
+        convert_range_message(seq.scalar_range)
+        if hasattr(seq, "scalar_range")
+        else None
+    )
     length_range = convert_range_message(seq.length_range)
     return Sequence(
         name=None,
@@ -746,20 +766,28 @@ def to_space_message_default_converter() -> ToSpaceMessageConverter:
     conversion_map[Dict] = ToDictSpaceMessageConverter(res)
     return res
 
+
 class OpaqueMessageConverter:
     format_coverter_map: DictType[str, Callable[[bytes], Any]]
-    
+
     def __init__(self, format_coverter_map=None):
-        self.format_coverter_map = {} if format_coverter_map is None else format_coverter_map
+        self.format_coverter_map = (
+            {} if format_coverter_map is None else format_coverter_map
+        )
 
     def __call__(self, message: Opaque) -> Any:
         return self.format_coverter_map[message.format](message.data)
 
+
 def make_opaque_message_default_converter():
-    return OpaqueMessageConverter({"json://networkx/MultiDiGraph": _json2nx, "json://": bytes_to_json })
+    return OpaqueMessageConverter(
+        {"json://networkx/MultiDiGraph": _json2nx, "json://": bytes_to_json}
+    )
+
 
 def bytes_to_json(data: bytes):
     return json.loads(data.decode("utf-8"))
+
 
 def _json2nx(data: bytes):
     json_data = json.loads(data.decode("utf-8"))

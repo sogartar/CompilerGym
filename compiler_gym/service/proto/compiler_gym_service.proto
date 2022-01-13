@@ -353,6 +353,7 @@ message Event {
     float float_value = 5;
     double double_value = 6;
     string string_value = 7;
+    // TODO(boian): maybe remove this because 1D byte tensor can be used instead.
     bytes bytes_value = 8;
     // Fixed and variable length sequences are represented as one-dimensional tensor.
     BooleanTensor boolean_tensor = 9;

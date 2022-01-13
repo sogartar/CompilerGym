@@ -30,9 +30,10 @@ from compiler_gym.service import (
 )
 from compiler_gym.service.proto import AddBenchmarkRequest
 from compiler_gym.service.proto import Benchmark as BenchmarkProto
-from compiler_gym.service.proto import EndSessionReply, EndSessionRequest
-from compiler_gym.service.proto import Event
 from compiler_gym.service.proto import (
+    EndSessionReply,
+    EndSessionRequest,
+    Event,
     ForkSessionReply,
     ForkSessionRequest,
     GetVersionReply,
@@ -254,7 +255,9 @@ class CompilerEnv(gym.Env):
             for obs in self.service.observation_spaces
             if obs.default_observation.WhichOneof("value")
             and isinstance(
-                getattr(obs.default_observation, obs.default_observation.WhichOneof("value")),
+                getattr(
+                    obs.default_observation, obs.default_observation.WhichOneof("value")
+                ),
                 numbers.Number,
             )
         ]
@@ -811,7 +814,7 @@ class CompilerEnv(gym.Env):
         start_session_request = StartSessionRequest(
             benchmark=self._benchmark_in_use_proto,
             action_space=(
-                [a.space.name for a in self.action_spaces].index(self.action_space_name)
+                [a.name for a in self.action_spaces].index(self.action_space_name)
                 if self.action_space_name
                 else 0
             ),
@@ -849,9 +852,7 @@ class CompilerEnv(gym.Env):
 
         # If the action space has changed, update it.
         if reply.HasField("new_action_space"):
-            self.action_space = proto_to_action_space(
-                reply.new_action_space
-            )
+            self.action_space = proto_to_action_space(reply.new_action_space)
 
         self.reward.reset(benchmark=self.benchmark, observation_view=self.observation)
         if self.reward_space:
@@ -923,9 +924,7 @@ class CompilerEnv(gym.Env):
         # Send the request to the backend service.
         request = StepRequest(
             session_id=self._session_id,
-            action=[
-                Event(int64_value=a) for a in actions
-            ],
+            action=[Event(int64_value=a) for a in actions],
             observation_space=[
                 observation_space.index for observation_space in observations_to_compute
             ],
@@ -969,9 +968,7 @@ class CompilerEnv(gym.Env):
 
         # If the action space has changed, update it.
         if reply.HasField("new_action_space"):
-            self.action_space = proto_to_action_space(
-                reply.new_action_space
-            )
+            self.action_space = proto_to_action_space(reply.new_action_space)
 
         # Translate observations to python representations.
         if len(reply.observation) != len(observations_to_compute):

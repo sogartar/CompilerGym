@@ -44,7 +44,9 @@ class Scalar(Space):
         return self.dtype(random.uniform(min, max))
 
     def contains(self, x):
-        if not np.issubdtype(np.find_common_type([], [x.dtype, self.dtype]), self.dtype):
+        if not np.issubdtype(
+            np.find_common_type([], [type(x), self.dtype]), self.dtype
+        ):
             return False
         min = -float("inf") if self.min is None else self.min
         max = float("inf") if self.max is None else self.max

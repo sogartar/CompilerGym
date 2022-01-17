@@ -15,20 +15,6 @@ from compiler_gym.service.proto import (  # DoubleRange as ScalarRange,
 )
 from compiler_gym.util.gym_type_hints import ObservationType
 
-# def _json2nx(observation):
-#     json_data = json.loads(observation.string_value)
-#     return nx.readwrite.json_graph.node_link_graph(
-#         json_data, multigraph=True, directed=True
-#     )
-
-
-# def _scalar_range2tuple(sr: ScalarRange, defaults=(-np.inf, np.inf)):
-#     """Convert a ScalarRange to a tuple of (min, max) bounds."""
-#     return (
-#         sr.min.value if sr.HasField("min") else defaults[0],
-#         sr.max.value if sr.HasField("max") else defaults[1],
-#     )
-
 
 class ObservationSpaceSpec:
     """Specification of an observation space.

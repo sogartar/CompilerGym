@@ -760,23 +760,6 @@ def test_convert_to_double_sequence_space():
     assert converted_seq.scalar_range.max == 5.0
 
 
-# def test_convert_string_sequence_space():
-#     seq = StringSequenceSpace(length_range=Int64Range(min=1, max=2))
-#     converted_seq = py_converters.convert_sequence_space(seq)
-#     assert isinstance(converted_seq, Sequence)
-#     assert converted_seq.dtype == str
-#     assert converted_seq.size_range[0] == 1
-#     assert converted_seq.size_range[1] == 2
-
-
-# def test_convert_to_string_sequence_space():
-#     seq = Sequence(name=None, dtype=str, size_range=(1, 2))
-#     converted_seq = py_converters.convert_to_string_sequence_space(seq)
-#     assert isinstance(converted_seq, StringSequenceSpace)
-#     assert converted_seq.length_range.min == 1
-#     assert converted_seq.length_range.max == 2
-
-
 def test_convert_string_space():
     space = StringSpace(length_range=Int64Range(min=1, max=2))
     converted_space = py_converters.convert_sequence_space(space)

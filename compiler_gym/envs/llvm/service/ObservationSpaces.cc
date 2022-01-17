@@ -67,13 +67,12 @@ std::vector<ObservationSpace> getLlvmObservationSpaceList() {
         Int64Box& featureSizes = *space.mutable_int64_box();
 
         Int64Tensor& featureSizesLow = *featureSizes.mutable_low();
-        std::vector<uint64_t> shape = std::vector<uint64_t>({kInstCountFeatureDimensionality});
-        featureSizesLow.mutable_shape()->Add(shape.begin(), shape.end());
+        *featureSizesLow.mutable_shape()->Add() = kInstCountFeatureDimensionality;
         std::vector<int64_t> low(kInstCountFeatureDimensionality, 0);
         featureSizesLow.mutable_values()->Add(low.begin(), low.end());
 
         Int64Tensor& featureSizesHigh = *featureSizes.mutable_high();
-        featureSizesHigh.mutable_shape()->Add(shape.begin(), shape.end());
+        *featureSizesHigh.mutable_shape()->Add() = kInstCountFeatureDimensionality;
         std::vector<int64_t> high(kInstCountFeatureDimensionality,
                                   std::numeric_limits<int64_t>::max());
         featureSizesHigh.mutable_values()->Add(high.begin(), high.end());
@@ -81,10 +80,10 @@ std::vector<ObservationSpace> getLlvmObservationSpaceList() {
         observationSpace.set_deterministic(true);
         observationSpace.set_platform_dependent(false);
 
-        observationSpace.mutable_default_observation()
-            ->mutable_int64_tensor()
-            ->mutable_shape()
-            ->Add(shape.begin(), shape.end());
+        *observationSpace.mutable_default_observation()
+             ->mutable_int64_tensor()
+             ->mutable_shape()
+             ->Add() = kInstCountFeatureDimensionality;
         observationSpace.mutable_default_observation()
             ->mutable_int64_tensor()
             ->mutable_values()
@@ -95,23 +94,22 @@ std::vector<ObservationSpace> getLlvmObservationSpaceList() {
         Int64Box& featureSizes = *space.mutable_int64_box();
 
         Int64Tensor& featureSizesLow = *featureSizes.mutable_low();
-        std::vector<uint64_t> shape = std::vector<uint64_t>({kAutophaseFeatureDim});
-        featureSizesLow.mutable_shape()->Add(shape.begin(), shape.end());
+        *featureSizesLow.mutable_shape()->Add() = kAutophaseFeatureDim;
         std::vector<int64_t> low(kAutophaseFeatureDim, 0);
         featureSizesLow.mutable_values()->Add(low.begin(), low.end());
 
         Int64Tensor& featureSizesHigh = *featureSizes.mutable_high();
-        featureSizesHigh.mutable_shape()->Add(shape.begin(), shape.end());
+        *featureSizesHigh.mutable_shape()->Add() = kAutophaseFeatureDim;
         std::vector<int64_t> high(kAutophaseFeatureDim, std::numeric_limits<int64_t>::max());
         featureSizesHigh.mutable_values()->Add(high.begin(), high.end());
 
         observationSpace.set_deterministic(true);
         observationSpace.set_platform_dependent(false);
 
-        observationSpace.mutable_default_observation()
-            ->mutable_int64_tensor()
-            ->mutable_shape()
-            ->Add(shape.begin(), shape.end());
+        *observationSpace.mutable_default_observation()
+             ->mutable_int64_tensor()
+             ->mutable_shape()
+             ->Add() = kAutophaseFeatureDim;
         observationSpace.mutable_default_observation()
             ->mutable_int64_tensor()
             ->mutable_values()

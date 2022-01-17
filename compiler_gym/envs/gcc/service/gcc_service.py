@@ -514,7 +514,7 @@ def make_gcc_compilation_session(gcc_bin: str):
             elif observation_space.space.name == "instruction_counts":
                 return Event(string_value=self.instruction_counts or "{}")
             elif observation_space.space.name == "obj":
-                return Event(binary_value=self.obj or b"")
+                return Event(bytes_value=self.obj or b"")
             elif observation_space.space.name == "obj_size":
                 return Event(int64_value=self.obj_size or -1)
             elif observation_space.space.name == "obj_hash":

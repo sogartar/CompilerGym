@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 from typing import Optional, Tuple
 
+import numpy as np
 from gym.spaces import Space
 
 from compiler_gym.spaces.common import issubdtype
@@ -124,6 +125,6 @@ class Sequence(Space):
             return False
         return (
             self.size_range == other.size_range
-            and self.dtype == other.dtype
+            and np.dtype(self.dtype) == np.dtype(other.dtype)
             and self.opaque_data_format == other.opaque_data_format
         )

@@ -71,7 +71,7 @@ def test_observation_spaces_failing_because_of_bug(gcc_bin: str):
             name="obj_size", min=-1, max=np.iinfo(np.int64).max, dtype=int
         )
         assert env.observation.spaces["asm"].space == Sequence(
-            name="asm", size_range=(0, None), dtype=str
+            name="asm", size_range=(0, np.iinfo(np.int64).max), dtype=str
         )
 
 

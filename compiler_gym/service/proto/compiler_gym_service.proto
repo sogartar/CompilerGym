@@ -292,7 +292,7 @@ message CommandlineSpace {
 
 message Space {
   string name = 1;
-  string type_id = 2;
+  optional string type_id = 2;
   oneof value {
     ListSpace space_list = 3;
     DictSpace space_dict = 4;
@@ -346,7 +346,7 @@ message DictEvent {
 // Common structure shared between actions and observations.
 // TODO(boian): Maybe rename to Effect
 message Event {
-  string type_id = 1;
+  optional string type_id = 1;
   oneof value {
     ListEvent event_list = 2;
     DictEvent event_dict = 3;

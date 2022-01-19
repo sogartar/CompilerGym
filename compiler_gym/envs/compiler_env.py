@@ -45,6 +45,9 @@ from compiler_gym.service.proto import (
     StepReply,
     StepRequest,
     proto_to_action_space,
+    ObservationSpace,
+    ActionSpace,
+    py_converters
 )
 from compiler_gym.spaces import DefaultRewardFromObservation, NamedDiscrete, Reward
 from compiler_gym.util.gym_type_hints import (
@@ -78,6 +81,21 @@ def _wrapped_step(
             raise SessionNotFound(str(e))
         raise
 
+class EnvConverters:
+    observation_space_converter: Callable[ObservationSpace, ObservationSpaceSpec]
+    action_space_converter: Callable[ActionSpace, Space]
+    observation_converter: Callable[[Any], Event]
+    action_converter: Callable[[Any], Event]
+
+    def __init__(self,
+                 observation_space_converter: Optional[Callable[ObservationSpace, ObservationSpaceSpec]] = None,
+                 action_space_converter: Optional[Callable[ActionSpace, Space]] = None,
+                 observation_converter: Optional[Callable[[Any], Event]] = None,
+                 action_converter: Optional[Callable[[Any], Event]] = None):
+        self.observation_space_converter = py_converters.make_message_default_converter() if observation_space_converter is None else observation_space_converter
+        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
+        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
+        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
 
 class CompilerEnv(gym.Env):
     """An OpenAI gym environment for compiler optimizations.

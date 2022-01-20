@@ -28,7 +28,7 @@ from compiler_gym.service import (
     ServiceTransportError,
     SessionNotFound,
 )
-from compiler_gym.service.proto import AddBenchmarkRequest
+from compiler_gym.service.proto import ActionSpace, AddBenchmarkRequest
 from compiler_gym.service.proto import Benchmark as BenchmarkProto
 from compiler_gym.service.proto import (
     EndSessionReply,
@@ -44,10 +44,7 @@ from compiler_gym.service.proto import (
     StartSessionRequest,
     StepReply,
     StepRequest,
-    proto_to_action_space,
-    ObservationSpace,
-    ActionSpace,
-    py_converters
+    py_converters,
 )
 from compiler_gym.spaces import DefaultRewardFromObservation, NamedDiscrete, Reward
 from compiler_gym.util.gym_type_hints import (
@@ -81,21 +78,27 @@ def _wrapped_step(
             raise SessionNotFound(str(e))
         raise
 
-class EnvConverters:
-    observation_space_converter: Callable[ObservationSpace, ObservationSpaceSpec]
-    action_space_converter: Callable[ActionSpace, Space]
-    observation_converter: Callable[[Any], Event]
-    action_converter: Callable[[Any], Event]
 
-    def __init__(self,
-                 observation_space_converter: Optional[Callable[ObservationSpace, ObservationSpaceSpec]] = None,
-                 action_space_converter: Optional[Callable[ActionSpace, Space]] = None,
-                 observation_converter: Optional[Callable[[Any], Event]] = None,
-                 action_converter: Optional[Callable[[Any], Event]] = None):
-        self.observation_space_converter = py_converters.make_message_default_converter() if observation_space_converter is None else observation_space_converter
-        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
-        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
-        self.action_space_converter = py_converters.make_message_default_converter() if action_space_converter is None else action_space_converter
+class ServiceMessageConverters:
+    action_space_converter: Callable[[ActionSpace], Space]
+    action_converter: Callable[[ActionType], Event]
+
+    def __init__(
+        self,
+        action_space_converter: Optional[Callable[[ActionSpace], Space]] = None,
+        action_converter: Optional[Callable[[Any], Event]] = None,
+    ):
+        self.action_space_converter = (
+            py_converters.make_message_default_converter()
+            if action_space_converter is None
+            else action_space_converter
+        )
+        self.action_converter = (
+            py_converters.to_event_message_default_converter()
+            if action_converter is None
+            else action_converter
+        )
+
 
 class CompilerEnv(gym.Env):
     """An OpenAI gym environment for compiler optimizations.
@@ -174,6 +177,7 @@ class CompilerEnv(gym.Env):
         rewards: Optional[List[Reward]] = None,
         datasets: Optional[Iterable[Dataset]] = None,
         benchmark: Optional[Union[str, Benchmark]] = None,
+        service_message_converters: ServiceMessageConverters = None,
         observation_space: Optional[Union[str, ObservationSpaceSpec]] = None,
         reward_space: Optional[Union[str, Reward]] = None,
         action_space: Optional[str] = None,
@@ -311,9 +315,16 @@ class CompilerEnv(gym.Env):
             # first reset() call.
             pass
 
+        self.service_message_converters = (
+            ServiceMessageConverters()
+            if service_message_converters is None
+            else service_message_converters
+        )
+
         # Process the available action, observation, and reward spaces.
         self.action_spaces = [
-            proto_to_action_space(space) for space in self.service.action_spaces
+            self.service_message_converters.action_space_converter(space)
+            for space in self.service.action_spaces
         ]
 
         self.observation = self._observation_view_type(
@@ -870,7 +881,9 @@ class CompilerEnv(gym.Env):
 
         # If the action space has changed, update it.
         if reply.HasField("new_action_space"):
-            self.action_space = proto_to_action_space(reply.new_action_space)
+            self.action_space = self.service_message_converters.action_space_converter(
+                reply.new_action_space
+            )
 
         self.reward.reset(benchmark=self.benchmark, observation_view=self.observation)
         if self.reward_space:
@@ -887,7 +900,7 @@ class CompilerEnv(gym.Env):
 
     def raw_step(
         self,
-        actions: Iterable[int],
+        actions: Iterable[ActionType],
         observations: Iterable[ObservationSpaceSpec],
         rewards: Iterable[Reward],
     ) -> StepType:
@@ -942,7 +955,9 @@ class CompilerEnv(gym.Env):
         # Send the request to the backend service.
         request = StepRequest(
             session_id=self._session_id,
-            action=[Event(int64_value=a) for a in actions],
+            action=[
+                self.service_message_converters.action_converter(a) for a in actions
+            ],
             observation_space=[
                 observation_space.index for observation_space in observations_to_compute
             ],
@@ -986,7 +1001,9 @@ class CompilerEnv(gym.Env):
 
         # If the action space has changed, update it.
         if reply.HasField("new_action_space"):
-            self.action_space = proto_to_action_space(reply.new_action_space)
+            self.action_space = self.service_message_converters.action_space_converter(
+                reply.new_action_space
+            )
 
         # Translate observations to python representations.
         if len(reply.observation) != len(observations_to_compute):

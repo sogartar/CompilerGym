@@ -59,10 +59,6 @@ from compiler_gym.spaces.sequence import Sequence
 from compiler_gym.spaces.tuple import Tuple
 
 
-def proto_to_action_space(space: ActionSpace):
-    return message_default_converter(space)
-
-
 class TypeBasedConverter:
     conversion_map: DictType[Type, Callable[[Any], Any]]
 
